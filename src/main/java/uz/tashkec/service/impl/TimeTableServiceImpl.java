@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.TimeTable;
 import uz.tashkec.repository.TimeTableRepository;
 import uz.tashkec.service.TimeTableService;
+import uz.tashkec.service.dto.TimeTableDTO;
+import uz.tashkec.service.mapper.TimeTableMapper;
 
 /**
  * Service Implementation for managing {@link TimeTable}.
@@ -21,68 +25,56 @@ public class TimeTableServiceImpl implements TimeTableService {
 
     private final TimeTableRepository timeTableRepository;
 
-    public TimeTableServiceImpl(TimeTableRepository timeTableRepository) {
+    private final TimeTableMapper timeTableMapper;
+
+    public TimeTableServiceImpl(TimeTableRepository timeTableRepository, TimeTableMapper timeTableMapper) {
         this.timeTableRepository = timeTableRepository;
+        this.timeTableMapper = timeTableMapper;
     }
 
     @Override
-    public TimeTable save(TimeTable timeTable) {
-        log.debug("Request to save TimeTable : {}", timeTable);
-        return timeTableRepository.save(timeTable);
+    public TimeTableDTO save(TimeTableDTO timeTableDTO) {
+        log.debug("Request to save TimeTable : {}", timeTableDTO);
+        TimeTable timeTable = timeTableMapper.toEntity(timeTableDTO);
+        timeTable = timeTableRepository.save(timeTable);
+        return timeTableMapper.toDto(timeTable);
     }
 
     @Override
-    public TimeTable update(TimeTable timeTable) {
-        log.debug("Request to update TimeTable : {}", timeTable);
-        return timeTableRepository.save(timeTable);
+    public TimeTableDTO update(TimeTableDTO timeTableDTO) {
+        log.debug("Request to update TimeTable : {}", timeTableDTO);
+        TimeTable timeTable = timeTableMapper.toEntity(timeTableDTO);
+        timeTable = timeTableRepository.save(timeTable);
+        return timeTableMapper.toDto(timeTable);
     }
 
     @Override
-    public Optional<TimeTable> partialUpdate(TimeTable timeTable) {
-        log.debug("Request to partially update TimeTable : {}", timeTable);
+    public Optional<TimeTableDTO> partialUpdate(TimeTableDTO timeTableDTO) {
+        log.debug("Request to partially update TimeTable : {}", timeTableDTO);
 
         return timeTableRepository
-            .findById(timeTable.getId())
+            .findById(timeTableDTO.getId())
             .map(existingTimeTable -> {
-                if (timeTable.getTitleUz() != null) {
-                    existingTimeTable.setTitleUz(timeTable.getTitleUz());
-                }
-                if (timeTable.getTitleRu() != null) {
-                    existingTimeTable.setTitleRu(timeTable.getTitleRu());
-                }
-                if (timeTable.getTitleKr() != null) {
-                    existingTimeTable.setTitleKr(timeTable.getTitleKr());
-                }
-                if (timeTable.getContentUz() != null) {
-                    existingTimeTable.setContentUz(timeTable.getContentUz());
-                }
-                if (timeTable.getContentRu() != null) {
-                    existingTimeTable.setContentRu(timeTable.getContentRu());
-                }
-                if (timeTable.getContentKr() != null) {
-                    existingTimeTable.setContentKr(timeTable.getContentKr());
-                }
-                if (timeTable.getPostedDate() != null) {
-                    existingTimeTable.setPostedDate(timeTable.getPostedDate());
-                }
+                timeTableMapper.partialUpdate(existingTimeTable, timeTableDTO);
 
                 return existingTimeTable;
             })
-            .map(timeTableRepository::save);
+            .map(timeTableRepository::save)
+            .map(timeTableMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<TimeTable> findAll() {
+    public List<TimeTableDTO> findAll() {
         log.debug("Request to get all TimeTables");
-        return timeTableRepository.findAll();
+        return timeTableRepository.findAll().stream().map(timeTableMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<TimeTable> findOne(Long id) {
+    public Optional<TimeTableDTO> findOne(Long id) {
         log.debug("Request to get TimeTable : {}", id);
-        return timeTableRepository.findById(id);
+        return timeTableRepository.findById(id).map(timeTableMapper::toDto);
     }
 
     @Override

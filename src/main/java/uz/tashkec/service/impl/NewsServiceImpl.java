@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.News;
 import uz.tashkec.repository.NewsRepository;
 import uz.tashkec.service.NewsService;
+import uz.tashkec.service.dto.NewsDTO;
+import uz.tashkec.service.mapper.NewsMapper;
 
 /**
  * Service Implementation for managing {@link News}.
@@ -21,71 +25,56 @@ public class NewsServiceImpl implements NewsService {
 
     private final NewsRepository newsRepository;
 
-    public NewsServiceImpl(NewsRepository newsRepository) {
+    private final NewsMapper newsMapper;
+
+    public NewsServiceImpl(NewsRepository newsRepository, NewsMapper newsMapper) {
         this.newsRepository = newsRepository;
+        this.newsMapper = newsMapper;
     }
 
     @Override
-    public News save(News news) {
-        log.debug("Request to save News : {}", news);
-        return newsRepository.save(news);
+    public NewsDTO save(NewsDTO newsDTO) {
+        log.debug("Request to save News : {}", newsDTO);
+        News news = newsMapper.toEntity(newsDTO);
+        news = newsRepository.save(news);
+        return newsMapper.toDto(news);
     }
 
     @Override
-    public News update(News news) {
-        log.debug("Request to update News : {}", news);
-        return newsRepository.save(news);
+    public NewsDTO update(NewsDTO newsDTO) {
+        log.debug("Request to update News : {}", newsDTO);
+        News news = newsMapper.toEntity(newsDTO);
+        news = newsRepository.save(news);
+        return newsMapper.toDto(news);
     }
 
     @Override
-    public Optional<News> partialUpdate(News news) {
-        log.debug("Request to partially update News : {}", news);
+    public Optional<NewsDTO> partialUpdate(NewsDTO newsDTO) {
+        log.debug("Request to partially update News : {}", newsDTO);
 
         return newsRepository
-            .findById(news.getId())
+            .findById(newsDTO.getId())
             .map(existingNews -> {
-                if (news.getTitleUz() != null) {
-                    existingNews.setTitleUz(news.getTitleUz());
-                }
-                if (news.getTitleRu() != null) {
-                    existingNews.setTitleRu(news.getTitleRu());
-                }
-                if (news.getTitleKr() != null) {
-                    existingNews.setTitleKr(news.getTitleKr());
-                }
-                if (news.getContentUz() != null) {
-                    existingNews.setContentUz(news.getContentUz());
-                }
-                if (news.getContentRu() != null) {
-                    existingNews.setContentRu(news.getContentRu());
-                }
-                if (news.getContentKr() != null) {
-                    existingNews.setContentKr(news.getContentKr());
-                }
-                if (news.getPostedDate() != null) {
-                    existingNews.setPostedDate(news.getPostedDate());
-                }
-                if (news.getStatus() != null) {
-                    existingNews.setStatus(news.getStatus());
-                }
+                newsMapper.partialUpdate(existingNews, newsDTO);
 
                 return existingNews;
             })
-            .map(newsRepository::save);
+            .map(newsRepository::save)
+            .map(newsMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<News> findAll() {
+    public List<NewsDTO> findAll() {
         log.debug("Request to get all News");
-        return newsRepository.findAll();
+        return newsRepository.findAll().stream().map(newsMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<News> findOne(Long id) {
+    public Optional<NewsDTO> findOne(Long id) {
         log.debug("Request to get News : {}", id);
-        return newsRepository.findById(id);
+        return newsRepository.findById(id).map(newsMapper::toDto);
     }
 
     @Override

@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.Events;
 import uz.tashkec.repository.EventsRepository;
 import uz.tashkec.service.EventsService;
+import uz.tashkec.service.dto.EventsDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class EventsResource {
     /**
      * {@code POST  /events} : Create a new events.
      *
-     * @param events the events to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new events, or with status {@code 400 (Bad Request)} if the events has already an ID.
+     * @param eventsDTO the eventsDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new eventsDTO, or with status {@code 400 (Bad Request)} if the events has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/events")
-    public ResponseEntity<Events> createEvents(@RequestBody Events events) throws URISyntaxException {
-        log.debug("REST request to save Events : {}", events);
-        if (events.getId() != null) {
+    public ResponseEntity<EventsDTO> createEvents(@RequestBody EventsDTO eventsDTO) throws URISyntaxException {
+        log.debug("REST request to save Events : {}", eventsDTO);
+        if (eventsDTO.getId() != null) {
             throw new BadRequestAlertException("A new events cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Events result = eventsService.save(events);
+        EventsDTO result = eventsService.save(eventsDTO);
         return ResponseEntity
             .created(new URI("/api/events/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,21 +63,23 @@ public class EventsResource {
     /**
      * {@code PUT  /events/:id} : Updates an existing events.
      *
-     * @param id the id of the events to save.
-     * @param events the events to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated events,
-     * or with status {@code 400 (Bad Request)} if the events is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the events couldn't be updated.
+     * @param id the id of the eventsDTO to save.
+     * @param eventsDTO the eventsDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated eventsDTO,
+     * or with status {@code 400 (Bad Request)} if the eventsDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the eventsDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/events/{id}")
-    public ResponseEntity<Events> updateEvents(@PathVariable(value = "id", required = false) final Long id, @RequestBody Events events)
-        throws URISyntaxException {
-        log.debug("REST request to update Events : {}, {}", id, events);
-        if (events.getId() == null) {
+    public ResponseEntity<EventsDTO> updateEvents(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody EventsDTO eventsDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to update Events : {}, {}", id, eventsDTO);
+        if (eventsDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, events.getId())) {
+        if (!Objects.equals(id, eventsDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -85,34 +87,34 @@ public class EventsResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Events result = eventsService.update(events);
+        EventsDTO result = eventsService.update(eventsDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, events.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, eventsDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /events/:id} : Partial updates given fields of an existing events, field will ignore if it is null
      *
-     * @param id the id of the events to save.
-     * @param events the events to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated events,
-     * or with status {@code 400 (Bad Request)} if the events is not valid,
-     * or with status {@code 404 (Not Found)} if the events is not found,
-     * or with status {@code 500 (Internal Server Error)} if the events couldn't be updated.
+     * @param id the id of the eventsDTO to save.
+     * @param eventsDTO the eventsDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated eventsDTO,
+     * or with status {@code 400 (Bad Request)} if the eventsDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the eventsDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the eventsDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/events/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Events> partialUpdateEvents(
+    public ResponseEntity<EventsDTO> partialUpdateEvents(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Events events
+        @RequestBody EventsDTO eventsDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Events partially : {}, {}", id, events);
-        if (events.getId() == null) {
+        log.debug("REST request to partial update Events partially : {}, {}", id, eventsDTO);
+        if (eventsDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, events.getId())) {
+        if (!Objects.equals(id, eventsDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -120,11 +122,11 @@ public class EventsResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Events> result = eventsService.partialUpdate(events);
+        Optional<EventsDTO> result = eventsService.partialUpdate(eventsDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, events.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, eventsDTO.getId().toString())
         );
     }
 
@@ -134,7 +136,7 @@ public class EventsResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of events in body.
      */
     @GetMapping("/events")
-    public List<Events> getAllEvents() {
+    public List<EventsDTO> getAllEvents() {
         log.debug("REST request to get all Events");
         return eventsService.findAll();
     }
@@ -142,20 +144,20 @@ public class EventsResource {
     /**
      * {@code GET  /events/:id} : get the "id" events.
      *
-     * @param id the id of the events to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the events, or with status {@code 404 (Not Found)}.
+     * @param id the id of the eventsDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the eventsDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/events/{id}")
-    public ResponseEntity<Events> getEvents(@PathVariable Long id) {
+    public ResponseEntity<EventsDTO> getEvents(@PathVariable Long id) {
         log.debug("REST request to get Events : {}", id);
-        Optional<Events> events = eventsService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(events);
+        Optional<EventsDTO> eventsDTO = eventsService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(eventsDTO);
     }
 
     /**
      * {@code DELETE  /events/:id} : delete the "id" events.
      *
-     * @param id the id of the events to delete.
+     * @param id the id of the eventsDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/events/{id}")

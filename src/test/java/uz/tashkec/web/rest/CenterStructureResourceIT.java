@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.CenterStructure;
 import uz.tashkec.repository.CenterStructureRepository;
+import uz.tashkec.service.dto.CenterStructureDTO;
+import uz.tashkec.service.mapper.CenterStructureMapper;
 
 /**
  * Integration tests for the {@link CenterStructureResource} REST controller.
@@ -46,6 +48,9 @@ class CenterStructureResourceIT {
 
     @Autowired
     private CenterStructureRepository centerStructureRepository;
+
+    @Autowired
+    private CenterStructureMapper centerStructureMapper;
 
     @Autowired
     private EntityManager em;
@@ -93,9 +98,10 @@ class CenterStructureResourceIT {
     void createCenterStructure() throws Exception {
         int databaseSizeBeforeCreate = centerStructureRepository.findAll().size();
         // Create the CenterStructure
+        CenterStructureDTO centerStructureDTO = centerStructureMapper.toDto(centerStructure);
         restCenterStructureMockMvc
             .perform(
-                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(centerStructure))
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(centerStructureDTO))
             )
             .andExpect(status().isCreated());
 
@@ -113,13 +119,14 @@ class CenterStructureResourceIT {
     void createCenterStructureWithExistingId() throws Exception {
         // Create the CenterStructure with an existing ID
         centerStructure.setId(1L);
+        CenterStructureDTO centerStructureDTO = centerStructureMapper.toDto(centerStructure);
 
         int databaseSizeBeforeCreate = centerStructureRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restCenterStructureMockMvc
             .perform(
-                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(centerStructure))
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(centerStructureDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -182,12 +189,13 @@ class CenterStructureResourceIT {
         // Disconnect from session so that the updates on updatedCenterStructure are not directly saved in db
         em.detach(updatedCenterStructure);
         updatedCenterStructure.contentUz(UPDATED_CONTENT_UZ).contentRu(UPDATED_CONTENT_RU).contentKr(UPDATED_CONTENT_KR);
+        CenterStructureDTO centerStructureDTO = centerStructureMapper.toDto(updatedCenterStructure);
 
         restCenterStructureMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedCenterStructure.getId())
+                put(ENTITY_API_URL_ID, centerStructureDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedCenterStructure))
+                    .content(TestUtil.convertObjectToJsonBytes(centerStructureDTO))
             )
             .andExpect(status().isOk());
 
@@ -206,12 +214,15 @@ class CenterStructureResourceIT {
         int databaseSizeBeforeUpdate = centerStructureRepository.findAll().size();
         centerStructure.setId(count.incrementAndGet());
 
+        // Create the CenterStructure
+        CenterStructureDTO centerStructureDTO = centerStructureMapper.toDto(centerStructure);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCenterStructureMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, centerStructure.getId())
+                put(ENTITY_API_URL_ID, centerStructureDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(centerStructure))
+                    .content(TestUtil.convertObjectToJsonBytes(centerStructureDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -226,12 +237,15 @@ class CenterStructureResourceIT {
         int databaseSizeBeforeUpdate = centerStructureRepository.findAll().size();
         centerStructure.setId(count.incrementAndGet());
 
+        // Create the CenterStructure
+        CenterStructureDTO centerStructureDTO = centerStructureMapper.toDto(centerStructure);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCenterStructureMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(centerStructure))
+                    .content(TestUtil.convertObjectToJsonBytes(centerStructureDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -246,10 +260,13 @@ class CenterStructureResourceIT {
         int databaseSizeBeforeUpdate = centerStructureRepository.findAll().size();
         centerStructure.setId(count.incrementAndGet());
 
+        // Create the CenterStructure
+        CenterStructureDTO centerStructureDTO = centerStructureMapper.toDto(centerStructure);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCenterStructureMockMvc
             .perform(
-                put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(centerStructure))
+                put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(centerStructureDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 
@@ -326,12 +343,15 @@ class CenterStructureResourceIT {
         int databaseSizeBeforeUpdate = centerStructureRepository.findAll().size();
         centerStructure.setId(count.incrementAndGet());
 
+        // Create the CenterStructure
+        CenterStructureDTO centerStructureDTO = centerStructureMapper.toDto(centerStructure);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCenterStructureMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, centerStructure.getId())
+                patch(ENTITY_API_URL_ID, centerStructureDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(centerStructure))
+                    .content(TestUtil.convertObjectToJsonBytes(centerStructureDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -346,12 +366,15 @@ class CenterStructureResourceIT {
         int databaseSizeBeforeUpdate = centerStructureRepository.findAll().size();
         centerStructure.setId(count.incrementAndGet());
 
+        // Create the CenterStructure
+        CenterStructureDTO centerStructureDTO = centerStructureMapper.toDto(centerStructure);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCenterStructureMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(centerStructure))
+                    .content(TestUtil.convertObjectToJsonBytes(centerStructureDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -366,12 +389,15 @@ class CenterStructureResourceIT {
         int databaseSizeBeforeUpdate = centerStructureRepository.findAll().size();
         centerStructure.setId(count.incrementAndGet());
 
+        // Create the CenterStructure
+        CenterStructureDTO centerStructureDTO = centerStructureMapper.toDto(centerStructure);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restCenterStructureMockMvc
             .perform(
                 patch(ENTITY_API_URL)
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(centerStructure))
+                    .content(TestUtil.convertObjectToJsonBytes(centerStructureDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

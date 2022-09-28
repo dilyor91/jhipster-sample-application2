@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.Attachment;
 import uz.tashkec.repository.AttachmentRepository;
 import uz.tashkec.service.AttachmentService;
+import uz.tashkec.service.dto.AttachmentDTO;
+import uz.tashkec.service.mapper.AttachmentMapper;
 
 /**
  * Service Implementation for managing {@link Attachment}.
@@ -21,77 +25,56 @@ public class AttachmentServiceImpl implements AttachmentService {
 
     private final AttachmentRepository attachmentRepository;
 
-    public AttachmentServiceImpl(AttachmentRepository attachmentRepository) {
+    private final AttachmentMapper attachmentMapper;
+
+    public AttachmentServiceImpl(AttachmentRepository attachmentRepository, AttachmentMapper attachmentMapper) {
         this.attachmentRepository = attachmentRepository;
+        this.attachmentMapper = attachmentMapper;
     }
 
     @Override
-    public Attachment save(Attachment attachment) {
-        log.debug("Request to save Attachment : {}", attachment);
-        return attachmentRepository.save(attachment);
+    public AttachmentDTO save(AttachmentDTO attachmentDTO) {
+        log.debug("Request to save Attachment : {}", attachmentDTO);
+        Attachment attachment = attachmentMapper.toEntity(attachmentDTO);
+        attachment = attachmentRepository.save(attachment);
+        return attachmentMapper.toDto(attachment);
     }
 
     @Override
-    public Attachment update(Attachment attachment) {
-        log.debug("Request to update Attachment : {}", attachment);
-        return attachmentRepository.save(attachment);
+    public AttachmentDTO update(AttachmentDTO attachmentDTO) {
+        log.debug("Request to update Attachment : {}", attachmentDTO);
+        Attachment attachment = attachmentMapper.toEntity(attachmentDTO);
+        attachment = attachmentRepository.save(attachment);
+        return attachmentMapper.toDto(attachment);
     }
 
     @Override
-    public Optional<Attachment> partialUpdate(Attachment attachment) {
-        log.debug("Request to partially update Attachment : {}", attachment);
+    public Optional<AttachmentDTO> partialUpdate(AttachmentDTO attachmentDTO) {
+        log.debug("Request to partially update Attachment : {}", attachmentDTO);
 
         return attachmentRepository
-            .findById(attachment.getId())
+            .findById(attachmentDTO.getId())
             .map(existingAttachment -> {
-                if (attachment.getFileNameUz() != null) {
-                    existingAttachment.setFileNameUz(attachment.getFileNameUz());
-                }
-                if (attachment.getFileNameRu() != null) {
-                    existingAttachment.setFileNameRu(attachment.getFileNameRu());
-                }
-                if (attachment.getFileNameKr() != null) {
-                    existingAttachment.setFileNameKr(attachment.getFileNameKr());
-                }
-                if (attachment.getPath() != null) {
-                    existingAttachment.setPath(attachment.getPath());
-                }
-                if (attachment.getOriginalFileName() != null) {
-                    existingAttachment.setOriginalFileName(attachment.getOriginalFileName());
-                }
-                if (attachment.getContentType() != null) {
-                    existingAttachment.setContentType(attachment.getContentType());
-                }
-                if (attachment.getFileSize() != null) {
-                    existingAttachment.setFileSize(attachment.getFileSize());
-                }
-                if (attachment.getSuffix() != null) {
-                    existingAttachment.setSuffix(attachment.getSuffix());
-                }
-                if (attachment.getThumbnailFileName() != null) {
-                    existingAttachment.setThumbnailFileName(attachment.getThumbnailFileName());
-                }
-                if (attachment.getBucketName() != null) {
-                    existingAttachment.setBucketName(attachment.getBucketName());
-                }
+                attachmentMapper.partialUpdate(existingAttachment, attachmentDTO);
 
                 return existingAttachment;
             })
-            .map(attachmentRepository::save);
+            .map(attachmentRepository::save)
+            .map(attachmentMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Attachment> findAll() {
+    public List<AttachmentDTO> findAll() {
         log.debug("Request to get all Attachments");
-        return attachmentRepository.findAll();
+        return attachmentRepository.findAll().stream().map(attachmentMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Attachment> findOne(Long id) {
+    public Optional<AttachmentDTO> findOne(Long id) {
         log.debug("Request to get Attachment : {}", id);
-        return attachmentRepository.findById(id);
+        return attachmentRepository.findById(id).map(attachmentMapper::toDto);
     }
 
     @Override

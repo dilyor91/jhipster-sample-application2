@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Greeting;
+import uz.tashkec.service.dto.GreetingDTO;
 
 /**
- * Service Interface for managing {@link Greeting}.
+ * Service Interface for managing {@link uz.tashkec.domain.Greeting}.
  */
 public interface GreetingService {
     /**
      * Save a greeting.
      *
-     * @param greeting the entity to save.
+     * @param greetingDTO the entity to save.
      * @return the persisted entity.
      */
-    Greeting save(Greeting greeting);
+    GreetingDTO save(GreetingDTO greetingDTO);
 
     /**
      * Updates a greeting.
      *
-     * @param greeting the entity to update.
+     * @param greetingDTO the entity to update.
      * @return the persisted entity.
      */
-    Greeting update(Greeting greeting);
+    GreetingDTO update(GreetingDTO greetingDTO);
 
     /**
      * Partially updates a greeting.
      *
-     * @param greeting the entity to update partially.
+     * @param greetingDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Greeting> partialUpdate(Greeting greeting);
+    Optional<GreetingDTO> partialUpdate(GreetingDTO greetingDTO);
 
     /**
      * Get all the greetings.
      *
      * @return the list of entities.
      */
-    List<Greeting> findAll();
+    List<GreetingDTO> findAll();
 
     /**
      * Get the "id" greeting.
@@ -45,7 +45,7 @@ public interface GreetingService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Greeting> findOne(Long id);
+    Optional<GreetingDTO> findOne(Long id);
 
     /**
      * Delete the "id" greeting.

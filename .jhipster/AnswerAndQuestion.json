@@ -1,7 +1,7 @@
 {
   "applications": "*",
   "changelogDate": "20220928111734",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "answer_and_question",
   "fields": [

@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.StudyAtKorea;
 import uz.tashkec.repository.StudyAtKoreaRepository;
+import uz.tashkec.service.dto.StudyAtKoreaDTO;
+import uz.tashkec.service.mapper.StudyAtKoreaMapper;
 
 /**
  * Integration tests for the {@link StudyAtKoreaResource} REST controller.
@@ -55,6 +57,9 @@ class StudyAtKoreaResourceIT {
 
     @Autowired
     private StudyAtKoreaRepository studyAtKoreaRepository;
+
+    @Autowired
+    private StudyAtKoreaMapper studyAtKoreaMapper;
 
     @Autowired
     private EntityManager em;
@@ -108,8 +113,11 @@ class StudyAtKoreaResourceIT {
     void createStudyAtKorea() throws Exception {
         int databaseSizeBeforeCreate = studyAtKoreaRepository.findAll().size();
         // Create the StudyAtKorea
+        StudyAtKoreaDTO studyAtKoreaDTO = studyAtKoreaMapper.toDto(studyAtKorea);
         restStudyAtKoreaMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(studyAtKorea)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(studyAtKoreaDTO))
+            )
             .andExpect(status().isCreated());
 
         // Validate the StudyAtKorea in the database
@@ -129,12 +137,15 @@ class StudyAtKoreaResourceIT {
     void createStudyAtKoreaWithExistingId() throws Exception {
         // Create the StudyAtKorea with an existing ID
         studyAtKorea.setId(1L);
+        StudyAtKoreaDTO studyAtKoreaDTO = studyAtKoreaMapper.toDto(studyAtKorea);
 
         int databaseSizeBeforeCreate = studyAtKoreaRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restStudyAtKoreaMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(studyAtKorea)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(studyAtKoreaDTO))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the StudyAtKorea in the database
@@ -208,12 +219,13 @@ class StudyAtKoreaResourceIT {
             .contentUz(UPDATED_CONTENT_UZ)
             .contentRu(UPDATED_CONTENT_RU)
             .contentKr(UPDATED_CONTENT_KR);
+        StudyAtKoreaDTO studyAtKoreaDTO = studyAtKoreaMapper.toDto(updatedStudyAtKorea);
 
         restStudyAtKoreaMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedStudyAtKorea.getId())
+                put(ENTITY_API_URL_ID, studyAtKoreaDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedStudyAtKorea))
+                    .content(TestUtil.convertObjectToJsonBytes(studyAtKoreaDTO))
             )
             .andExpect(status().isOk());
 
@@ -235,12 +247,15 @@ class StudyAtKoreaResourceIT {
         int databaseSizeBeforeUpdate = studyAtKoreaRepository.findAll().size();
         studyAtKorea.setId(count.incrementAndGet());
 
+        // Create the StudyAtKorea
+        StudyAtKoreaDTO studyAtKoreaDTO = studyAtKoreaMapper.toDto(studyAtKorea);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restStudyAtKoreaMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, studyAtKorea.getId())
+                put(ENTITY_API_URL_ID, studyAtKoreaDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(studyAtKorea))
+                    .content(TestUtil.convertObjectToJsonBytes(studyAtKoreaDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -255,12 +270,15 @@ class StudyAtKoreaResourceIT {
         int databaseSizeBeforeUpdate = studyAtKoreaRepository.findAll().size();
         studyAtKorea.setId(count.incrementAndGet());
 
+        // Create the StudyAtKorea
+        StudyAtKoreaDTO studyAtKoreaDTO = studyAtKoreaMapper.toDto(studyAtKorea);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restStudyAtKoreaMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(studyAtKorea))
+                    .content(TestUtil.convertObjectToJsonBytes(studyAtKoreaDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -275,9 +293,14 @@ class StudyAtKoreaResourceIT {
         int databaseSizeBeforeUpdate = studyAtKoreaRepository.findAll().size();
         studyAtKorea.setId(count.incrementAndGet());
 
+        // Create the StudyAtKorea
+        StudyAtKoreaDTO studyAtKoreaDTO = studyAtKoreaMapper.toDto(studyAtKorea);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restStudyAtKoreaMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(studyAtKorea)))
+            .perform(
+                put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(studyAtKoreaDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the StudyAtKorea in the database
@@ -365,12 +388,15 @@ class StudyAtKoreaResourceIT {
         int databaseSizeBeforeUpdate = studyAtKoreaRepository.findAll().size();
         studyAtKorea.setId(count.incrementAndGet());
 
+        // Create the StudyAtKorea
+        StudyAtKoreaDTO studyAtKoreaDTO = studyAtKoreaMapper.toDto(studyAtKorea);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restStudyAtKoreaMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, studyAtKorea.getId())
+                patch(ENTITY_API_URL_ID, studyAtKoreaDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(studyAtKorea))
+                    .content(TestUtil.convertObjectToJsonBytes(studyAtKoreaDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -385,12 +411,15 @@ class StudyAtKoreaResourceIT {
         int databaseSizeBeforeUpdate = studyAtKoreaRepository.findAll().size();
         studyAtKorea.setId(count.incrementAndGet());
 
+        // Create the StudyAtKorea
+        StudyAtKoreaDTO studyAtKoreaDTO = studyAtKoreaMapper.toDto(studyAtKorea);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restStudyAtKoreaMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(studyAtKorea))
+                    .content(TestUtil.convertObjectToJsonBytes(studyAtKoreaDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -405,10 +434,15 @@ class StudyAtKoreaResourceIT {
         int databaseSizeBeforeUpdate = studyAtKoreaRepository.findAll().size();
         studyAtKorea.setId(count.incrementAndGet());
 
+        // Create the StudyAtKorea
+        StudyAtKoreaDTO studyAtKoreaDTO = studyAtKoreaMapper.toDto(studyAtKorea);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restStudyAtKoreaMockMvc
             .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(studyAtKorea))
+                patch(ENTITY_API_URL)
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(studyAtKoreaDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.TimeTable;
 import uz.tashkec.repository.TimeTableRepository;
 import uz.tashkec.service.TimeTableService;
+import uz.tashkec.service.dto.TimeTableDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class TimeTableResource {
     /**
      * {@code POST  /time-tables} : Create a new timeTable.
      *
-     * @param timeTable the timeTable to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new timeTable, or with status {@code 400 (Bad Request)} if the timeTable has already an ID.
+     * @param timeTableDTO the timeTableDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new timeTableDTO, or with status {@code 400 (Bad Request)} if the timeTable has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/time-tables")
-    public ResponseEntity<TimeTable> createTimeTable(@RequestBody TimeTable timeTable) throws URISyntaxException {
-        log.debug("REST request to save TimeTable : {}", timeTable);
-        if (timeTable.getId() != null) {
+    public ResponseEntity<TimeTableDTO> createTimeTable(@RequestBody TimeTableDTO timeTableDTO) throws URISyntaxException {
+        log.debug("REST request to save TimeTable : {}", timeTableDTO);
+        if (timeTableDTO.getId() != null) {
             throw new BadRequestAlertException("A new timeTable cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        TimeTable result = timeTableService.save(timeTable);
+        TimeTableDTO result = timeTableService.save(timeTableDTO);
         return ResponseEntity
             .created(new URI("/api/time-tables/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,23 +63,23 @@ public class TimeTableResource {
     /**
      * {@code PUT  /time-tables/:id} : Updates an existing timeTable.
      *
-     * @param id the id of the timeTable to save.
-     * @param timeTable the timeTable to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated timeTable,
-     * or with status {@code 400 (Bad Request)} if the timeTable is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the timeTable couldn't be updated.
+     * @param id the id of the timeTableDTO to save.
+     * @param timeTableDTO the timeTableDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated timeTableDTO,
+     * or with status {@code 400 (Bad Request)} if the timeTableDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the timeTableDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/time-tables/{id}")
-    public ResponseEntity<TimeTable> updateTimeTable(
+    public ResponseEntity<TimeTableDTO> updateTimeTable(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody TimeTable timeTable
+        @RequestBody TimeTableDTO timeTableDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update TimeTable : {}, {}", id, timeTable);
-        if (timeTable.getId() == null) {
+        log.debug("REST request to update TimeTable : {}, {}", id, timeTableDTO);
+        if (timeTableDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, timeTable.getId())) {
+        if (!Objects.equals(id, timeTableDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -87,34 +87,34 @@ public class TimeTableResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        TimeTable result = timeTableService.update(timeTable);
+        TimeTableDTO result = timeTableService.update(timeTableDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, timeTable.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, timeTableDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /time-tables/:id} : Partial updates given fields of an existing timeTable, field will ignore if it is null
      *
-     * @param id the id of the timeTable to save.
-     * @param timeTable the timeTable to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated timeTable,
-     * or with status {@code 400 (Bad Request)} if the timeTable is not valid,
-     * or with status {@code 404 (Not Found)} if the timeTable is not found,
-     * or with status {@code 500 (Internal Server Error)} if the timeTable couldn't be updated.
+     * @param id the id of the timeTableDTO to save.
+     * @param timeTableDTO the timeTableDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated timeTableDTO,
+     * or with status {@code 400 (Bad Request)} if the timeTableDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the timeTableDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the timeTableDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/time-tables/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<TimeTable> partialUpdateTimeTable(
+    public ResponseEntity<TimeTableDTO> partialUpdateTimeTable(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody TimeTable timeTable
+        @RequestBody TimeTableDTO timeTableDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update TimeTable partially : {}, {}", id, timeTable);
-        if (timeTable.getId() == null) {
+        log.debug("REST request to partial update TimeTable partially : {}, {}", id, timeTableDTO);
+        if (timeTableDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, timeTable.getId())) {
+        if (!Objects.equals(id, timeTableDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -122,11 +122,11 @@ public class TimeTableResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<TimeTable> result = timeTableService.partialUpdate(timeTable);
+        Optional<TimeTableDTO> result = timeTableService.partialUpdate(timeTableDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, timeTable.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, timeTableDTO.getId().toString())
         );
     }
 
@@ -136,7 +136,7 @@ public class TimeTableResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of timeTables in body.
      */
     @GetMapping("/time-tables")
-    public List<TimeTable> getAllTimeTables() {
+    public List<TimeTableDTO> getAllTimeTables() {
         log.debug("REST request to get all TimeTables");
         return timeTableService.findAll();
     }
@@ -144,20 +144,20 @@ public class TimeTableResource {
     /**
      * {@code GET  /time-tables/:id} : get the "id" timeTable.
      *
-     * @param id the id of the timeTable to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the timeTable, or with status {@code 404 (Not Found)}.
+     * @param id the id of the timeTableDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the timeTableDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/time-tables/{id}")
-    public ResponseEntity<TimeTable> getTimeTable(@PathVariable Long id) {
+    public ResponseEntity<TimeTableDTO> getTimeTable(@PathVariable Long id) {
         log.debug("REST request to get TimeTable : {}", id);
-        Optional<TimeTable> timeTable = timeTableService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(timeTable);
+        Optional<TimeTableDTO> timeTableDTO = timeTableService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(timeTableDTO);
     }
 
     /**
      * {@code DELETE  /time-tables/:id} : delete the "id" timeTable.
      *
-     * @param id the id of the timeTable to delete.
+     * @param id the id of the timeTableDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/time-tables/{id}")

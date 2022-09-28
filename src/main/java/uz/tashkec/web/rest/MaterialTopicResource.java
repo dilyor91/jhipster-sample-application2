@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.MaterialTopic;
 import uz.tashkec.repository.MaterialTopicRepository;
 import uz.tashkec.service.MaterialTopicService;
+import uz.tashkec.service.dto.MaterialTopicDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class MaterialTopicResource {
     /**
      * {@code POST  /material-topics} : Create a new materialTopic.
      *
-     * @param materialTopic the materialTopic to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new materialTopic, or with status {@code 400 (Bad Request)} if the materialTopic has already an ID.
+     * @param materialTopicDTO the materialTopicDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new materialTopicDTO, or with status {@code 400 (Bad Request)} if the materialTopic has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/material-topics")
-    public ResponseEntity<MaterialTopic> createMaterialTopic(@RequestBody MaterialTopic materialTopic) throws URISyntaxException {
-        log.debug("REST request to save MaterialTopic : {}", materialTopic);
-        if (materialTopic.getId() != null) {
+    public ResponseEntity<MaterialTopicDTO> createMaterialTopic(@RequestBody MaterialTopicDTO materialTopicDTO) throws URISyntaxException {
+        log.debug("REST request to save MaterialTopic : {}", materialTopicDTO);
+        if (materialTopicDTO.getId() != null) {
             throw new BadRequestAlertException("A new materialTopic cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        MaterialTopic result = materialTopicService.save(materialTopic);
+        MaterialTopicDTO result = materialTopicService.save(materialTopicDTO);
         return ResponseEntity
             .created(new URI("/api/material-topics/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,23 +63,23 @@ public class MaterialTopicResource {
     /**
      * {@code PUT  /material-topics/:id} : Updates an existing materialTopic.
      *
-     * @param id the id of the materialTopic to save.
-     * @param materialTopic the materialTopic to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated materialTopic,
-     * or with status {@code 400 (Bad Request)} if the materialTopic is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the materialTopic couldn't be updated.
+     * @param id the id of the materialTopicDTO to save.
+     * @param materialTopicDTO the materialTopicDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated materialTopicDTO,
+     * or with status {@code 400 (Bad Request)} if the materialTopicDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the materialTopicDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/material-topics/{id}")
-    public ResponseEntity<MaterialTopic> updateMaterialTopic(
+    public ResponseEntity<MaterialTopicDTO> updateMaterialTopic(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody MaterialTopic materialTopic
+        @RequestBody MaterialTopicDTO materialTopicDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update MaterialTopic : {}, {}", id, materialTopic);
-        if (materialTopic.getId() == null) {
+        log.debug("REST request to update MaterialTopic : {}, {}", id, materialTopicDTO);
+        if (materialTopicDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, materialTopic.getId())) {
+        if (!Objects.equals(id, materialTopicDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -87,34 +87,34 @@ public class MaterialTopicResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        MaterialTopic result = materialTopicService.update(materialTopic);
+        MaterialTopicDTO result = materialTopicService.update(materialTopicDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, materialTopic.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, materialTopicDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /material-topics/:id} : Partial updates given fields of an existing materialTopic, field will ignore if it is null
      *
-     * @param id the id of the materialTopic to save.
-     * @param materialTopic the materialTopic to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated materialTopic,
-     * or with status {@code 400 (Bad Request)} if the materialTopic is not valid,
-     * or with status {@code 404 (Not Found)} if the materialTopic is not found,
-     * or with status {@code 500 (Internal Server Error)} if the materialTopic couldn't be updated.
+     * @param id the id of the materialTopicDTO to save.
+     * @param materialTopicDTO the materialTopicDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated materialTopicDTO,
+     * or with status {@code 400 (Bad Request)} if the materialTopicDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the materialTopicDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the materialTopicDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/material-topics/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<MaterialTopic> partialUpdateMaterialTopic(
+    public ResponseEntity<MaterialTopicDTO> partialUpdateMaterialTopic(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody MaterialTopic materialTopic
+        @RequestBody MaterialTopicDTO materialTopicDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update MaterialTopic partially : {}, {}", id, materialTopic);
-        if (materialTopic.getId() == null) {
+        log.debug("REST request to partial update MaterialTopic partially : {}, {}", id, materialTopicDTO);
+        if (materialTopicDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, materialTopic.getId())) {
+        if (!Objects.equals(id, materialTopicDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -122,11 +122,11 @@ public class MaterialTopicResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<MaterialTopic> result = materialTopicService.partialUpdate(materialTopic);
+        Optional<MaterialTopicDTO> result = materialTopicService.partialUpdate(materialTopicDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, materialTopic.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, materialTopicDTO.getId().toString())
         );
     }
 
@@ -136,7 +136,7 @@ public class MaterialTopicResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of materialTopics in body.
      */
     @GetMapping("/material-topics")
-    public List<MaterialTopic> getAllMaterialTopics() {
+    public List<MaterialTopicDTO> getAllMaterialTopics() {
         log.debug("REST request to get all MaterialTopics");
         return materialTopicService.findAll();
     }
@@ -144,20 +144,20 @@ public class MaterialTopicResource {
     /**
      * {@code GET  /material-topics/:id} : get the "id" materialTopic.
      *
-     * @param id the id of the materialTopic to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the materialTopic, or with status {@code 404 (Not Found)}.
+     * @param id the id of the materialTopicDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the materialTopicDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/material-topics/{id}")
-    public ResponseEntity<MaterialTopic> getMaterialTopic(@PathVariable Long id) {
+    public ResponseEntity<MaterialTopicDTO> getMaterialTopic(@PathVariable Long id) {
         log.debug("REST request to get MaterialTopic : {}", id);
-        Optional<MaterialTopic> materialTopic = materialTopicService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(materialTopic);
+        Optional<MaterialTopicDTO> materialTopicDTO = materialTopicService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(materialTopicDTO);
     }
 
     /**
      * {@code DELETE  /material-topics/:id} : delete the "id" materialTopic.
      *
-     * @param id the id of the materialTopic to delete.
+     * @param id the id of the materialTopicDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/material-topics/{id}")

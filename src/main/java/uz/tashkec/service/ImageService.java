@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Image;
+import uz.tashkec.service.dto.ImageDTO;
 
 /**
- * Service Interface for managing {@link Image}.
+ * Service Interface for managing {@link uz.tashkec.domain.Image}.
  */
 public interface ImageService {
     /**
      * Save a image.
      *
-     * @param image the entity to save.
+     * @param imageDTO the entity to save.
      * @return the persisted entity.
      */
-    Image save(Image image);
+    ImageDTO save(ImageDTO imageDTO);
 
     /**
      * Updates a image.
      *
-     * @param image the entity to update.
+     * @param imageDTO the entity to update.
      * @return the persisted entity.
      */
-    Image update(Image image);
+    ImageDTO update(ImageDTO imageDTO);
 
     /**
      * Partially updates a image.
      *
-     * @param image the entity to update partially.
+     * @param imageDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Image> partialUpdate(Image image);
+    Optional<ImageDTO> partialUpdate(ImageDTO imageDTO);
 
     /**
      * Get all the images.
      *
      * @return the list of entities.
      */
-    List<Image> findAll();
+    List<ImageDTO> findAll();
 
     /**
      * Get the "id" image.
@@ -45,7 +45,7 @@ public interface ImageService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Image> findOne(Long id);
+    Optional<ImageDTO> findOne(Long id);
 
     /**
      * Delete the "id" image.

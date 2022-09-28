@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Logo;
+import uz.tashkec.service.dto.LogoDTO;
 
 /**
- * Service Interface for managing {@link Logo}.
+ * Service Interface for managing {@link uz.tashkec.domain.Logo}.
  */
 public interface LogoService {
     /**
      * Save a logo.
      *
-     * @param logo the entity to save.
+     * @param logoDTO the entity to save.
      * @return the persisted entity.
      */
-    Logo save(Logo logo);
+    LogoDTO save(LogoDTO logoDTO);
 
     /**
      * Updates a logo.
      *
-     * @param logo the entity to update.
+     * @param logoDTO the entity to update.
      * @return the persisted entity.
      */
-    Logo update(Logo logo);
+    LogoDTO update(LogoDTO logoDTO);
 
     /**
      * Partially updates a logo.
      *
-     * @param logo the entity to update partially.
+     * @param logoDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Logo> partialUpdate(Logo logo);
+    Optional<LogoDTO> partialUpdate(LogoDTO logoDTO);
 
     /**
      * Get all the logos.
      *
      * @return the list of entities.
      */
-    List<Logo> findAll();
+    List<LogoDTO> findAll();
 
     /**
      * Get the "id" logo.
@@ -45,7 +45,7 @@ public interface LogoService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Logo> findOne(Long id);
+    Optional<LogoDTO> findOne(Long id);
 
     /**
      * Delete the "id" logo.

@@ -1,7 +1,7 @@
 {
   "applications": "*",
   "changelogDate": "20220928111733",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "institution",
   "fields": [

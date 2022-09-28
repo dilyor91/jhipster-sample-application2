@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.Events;
 import uz.tashkec.repository.EventsRepository;
 import uz.tashkec.service.EventsService;
+import uz.tashkec.service.dto.EventsDTO;
+import uz.tashkec.service.mapper.EventsMapper;
 
 /**
  * Service Implementation for managing {@link Events}.
@@ -21,71 +25,56 @@ public class EventsServiceImpl implements EventsService {
 
     private final EventsRepository eventsRepository;
 
-    public EventsServiceImpl(EventsRepository eventsRepository) {
+    private final EventsMapper eventsMapper;
+
+    public EventsServiceImpl(EventsRepository eventsRepository, EventsMapper eventsMapper) {
         this.eventsRepository = eventsRepository;
+        this.eventsMapper = eventsMapper;
     }
 
     @Override
-    public Events save(Events events) {
-        log.debug("Request to save Events : {}", events);
-        return eventsRepository.save(events);
+    public EventsDTO save(EventsDTO eventsDTO) {
+        log.debug("Request to save Events : {}", eventsDTO);
+        Events events = eventsMapper.toEntity(eventsDTO);
+        events = eventsRepository.save(events);
+        return eventsMapper.toDto(events);
     }
 
     @Override
-    public Events update(Events events) {
-        log.debug("Request to update Events : {}", events);
-        return eventsRepository.save(events);
+    public EventsDTO update(EventsDTO eventsDTO) {
+        log.debug("Request to update Events : {}", eventsDTO);
+        Events events = eventsMapper.toEntity(eventsDTO);
+        events = eventsRepository.save(events);
+        return eventsMapper.toDto(events);
     }
 
     @Override
-    public Optional<Events> partialUpdate(Events events) {
-        log.debug("Request to partially update Events : {}", events);
+    public Optional<EventsDTO> partialUpdate(EventsDTO eventsDTO) {
+        log.debug("Request to partially update Events : {}", eventsDTO);
 
         return eventsRepository
-            .findById(events.getId())
+            .findById(eventsDTO.getId())
             .map(existingEvents -> {
-                if (events.getTitleUz() != null) {
-                    existingEvents.setTitleUz(events.getTitleUz());
-                }
-                if (events.getTitleRu() != null) {
-                    existingEvents.setTitleRu(events.getTitleRu());
-                }
-                if (events.getTitleKr() != null) {
-                    existingEvents.setTitleKr(events.getTitleKr());
-                }
-                if (events.getContentUz() != null) {
-                    existingEvents.setContentUz(events.getContentUz());
-                }
-                if (events.getContentRu() != null) {
-                    existingEvents.setContentRu(events.getContentRu());
-                }
-                if (events.getContentKr() != null) {
-                    existingEvents.setContentKr(events.getContentKr());
-                }
-                if (events.getPostedDate() != null) {
-                    existingEvents.setPostedDate(events.getPostedDate());
-                }
-                if (events.getStatus() != null) {
-                    existingEvents.setStatus(events.getStatus());
-                }
+                eventsMapper.partialUpdate(existingEvents, eventsDTO);
 
                 return existingEvents;
             })
-            .map(eventsRepository::save);
+            .map(eventsRepository::save)
+            .map(eventsMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Events> findAll() {
+    public List<EventsDTO> findAll() {
         log.debug("Request to get all Events");
-        return eventsRepository.findAll();
+        return eventsRepository.findAll().stream().map(eventsMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Events> findOne(Long id) {
+    public Optional<EventsDTO> findOne(Long id) {
         log.debug("Request to get Events : {}", id);
-        return eventsRepository.findById(id);
+        return eventsRepository.findById(id).map(eventsMapper::toDto);
     }
 
     @Override

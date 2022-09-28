@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Location;
+import uz.tashkec.service.dto.LocationDTO;
 
 /**
- * Service Interface for managing {@link Location}.
+ * Service Interface for managing {@link uz.tashkec.domain.Location}.
  */
 public interface LocationService {
     /**
      * Save a location.
      *
-     * @param location the entity to save.
+     * @param locationDTO the entity to save.
      * @return the persisted entity.
      */
-    Location save(Location location);
+    LocationDTO save(LocationDTO locationDTO);
 
     /**
      * Updates a location.
      *
-     * @param location the entity to update.
+     * @param locationDTO the entity to update.
      * @return the persisted entity.
      */
-    Location update(Location location);
+    LocationDTO update(LocationDTO locationDTO);
 
     /**
      * Partially updates a location.
      *
-     * @param location the entity to update partially.
+     * @param locationDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Location> partialUpdate(Location location);
+    Optional<LocationDTO> partialUpdate(LocationDTO locationDTO);
 
     /**
      * Get all the locations.
      *
      * @return the list of entities.
      */
-    List<Location> findAll();
+    List<LocationDTO> findAll();
 
     /**
      * Get the "id" location.
@@ -45,7 +45,7 @@ public interface LocationService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Location> findOne(Long id);
+    Optional<LocationDTO> findOne(Long id);
 
     /**
      * Delete the "id" location.

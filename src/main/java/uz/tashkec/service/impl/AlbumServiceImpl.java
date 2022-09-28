@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.Album;
 import uz.tashkec.repository.AlbumRepository;
 import uz.tashkec.service.AlbumService;
+import uz.tashkec.service.dto.AlbumDTO;
+import uz.tashkec.service.mapper.AlbumMapper;
 
 /**
  * Service Implementation for managing {@link Album}.
@@ -21,56 +25,56 @@ public class AlbumServiceImpl implements AlbumService {
 
     private final AlbumRepository albumRepository;
 
-    public AlbumServiceImpl(AlbumRepository albumRepository) {
+    private final AlbumMapper albumMapper;
+
+    public AlbumServiceImpl(AlbumRepository albumRepository, AlbumMapper albumMapper) {
         this.albumRepository = albumRepository;
+        this.albumMapper = albumMapper;
     }
 
     @Override
-    public Album save(Album album) {
-        log.debug("Request to save Album : {}", album);
-        return albumRepository.save(album);
+    public AlbumDTO save(AlbumDTO albumDTO) {
+        log.debug("Request to save Album : {}", albumDTO);
+        Album album = albumMapper.toEntity(albumDTO);
+        album = albumRepository.save(album);
+        return albumMapper.toDto(album);
     }
 
     @Override
-    public Album update(Album album) {
-        log.debug("Request to update Album : {}", album);
-        return albumRepository.save(album);
+    public AlbumDTO update(AlbumDTO albumDTO) {
+        log.debug("Request to update Album : {}", albumDTO);
+        Album album = albumMapper.toEntity(albumDTO);
+        album = albumRepository.save(album);
+        return albumMapper.toDto(album);
     }
 
     @Override
-    public Optional<Album> partialUpdate(Album album) {
-        log.debug("Request to partially update Album : {}", album);
+    public Optional<AlbumDTO> partialUpdate(AlbumDTO albumDTO) {
+        log.debug("Request to partially update Album : {}", albumDTO);
 
         return albumRepository
-            .findById(album.getId())
+            .findById(albumDTO.getId())
             .map(existingAlbum -> {
-                if (album.getTitleUz() != null) {
-                    existingAlbum.setTitleUz(album.getTitleUz());
-                }
-                if (album.getTitleRu() != null) {
-                    existingAlbum.setTitleRu(album.getTitleRu());
-                }
-                if (album.getTitleKr() != null) {
-                    existingAlbum.setTitleKr(album.getTitleKr());
-                }
+                albumMapper.partialUpdate(existingAlbum, albumDTO);
 
                 return existingAlbum;
             })
-            .map(albumRepository::save);
+            .map(albumRepository::save)
+            .map(albumMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Album> findAll() {
+    public List<AlbumDTO> findAll() {
         log.debug("Request to get all Albums");
-        return albumRepository.findAll();
+        return albumRepository.findAll().stream().map(albumMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Album> findOne(Long id) {
+    public Optional<AlbumDTO> findOne(Long id) {
         log.debug("Request to get Album : {}", id);
-        return albumRepository.findById(id);
+        return albumRepository.findById(id).map(albumMapper::toDto);
     }
 
     @Override

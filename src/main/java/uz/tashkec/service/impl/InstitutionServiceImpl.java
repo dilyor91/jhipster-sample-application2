@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.Institution;
 import uz.tashkec.repository.InstitutionRepository;
 import uz.tashkec.service.InstitutionService;
+import uz.tashkec.service.dto.InstitutionDTO;
+import uz.tashkec.service.mapper.InstitutionMapper;
 
 /**
  * Service Implementation for managing {@link Institution}.
@@ -21,74 +25,56 @@ public class InstitutionServiceImpl implements InstitutionService {
 
     private final InstitutionRepository institutionRepository;
 
-    public InstitutionServiceImpl(InstitutionRepository institutionRepository) {
+    private final InstitutionMapper institutionMapper;
+
+    public InstitutionServiceImpl(InstitutionRepository institutionRepository, InstitutionMapper institutionMapper) {
         this.institutionRepository = institutionRepository;
+        this.institutionMapper = institutionMapper;
     }
 
     @Override
-    public Institution save(Institution institution) {
-        log.debug("Request to save Institution : {}", institution);
-        return institutionRepository.save(institution);
+    public InstitutionDTO save(InstitutionDTO institutionDTO) {
+        log.debug("Request to save Institution : {}", institutionDTO);
+        Institution institution = institutionMapper.toEntity(institutionDTO);
+        institution = institutionRepository.save(institution);
+        return institutionMapper.toDto(institution);
     }
 
     @Override
-    public Institution update(Institution institution) {
-        log.debug("Request to update Institution : {}", institution);
-        return institutionRepository.save(institution);
+    public InstitutionDTO update(InstitutionDTO institutionDTO) {
+        log.debug("Request to update Institution : {}", institutionDTO);
+        Institution institution = institutionMapper.toEntity(institutionDTO);
+        institution = institutionRepository.save(institution);
+        return institutionMapper.toDto(institution);
     }
 
     @Override
-    public Optional<Institution> partialUpdate(Institution institution) {
-        log.debug("Request to partially update Institution : {}", institution);
+    public Optional<InstitutionDTO> partialUpdate(InstitutionDTO institutionDTO) {
+        log.debug("Request to partially update Institution : {}", institutionDTO);
 
         return institutionRepository
-            .findById(institution.getId())
+            .findById(institutionDTO.getId())
             .map(existingInstitution -> {
-                if (institution.getInstitutionType() != null) {
-                    existingInstitution.setInstitutionType(institution.getInstitutionType());
-                }
-                if (institution.getTitleUz() != null) {
-                    existingInstitution.setTitleUz(institution.getTitleUz());
-                }
-                if (institution.getTitleRu() != null) {
-                    existingInstitution.setTitleRu(institution.getTitleRu());
-                }
-                if (institution.getTitleKr() != null) {
-                    existingInstitution.setTitleKr(institution.getTitleKr());
-                }
-                if (institution.getContentUz() != null) {
-                    existingInstitution.setContentUz(institution.getContentUz());
-                }
-                if (institution.getContentRu() != null) {
-                    existingInstitution.setContentRu(institution.getContentRu());
-                }
-                if (institution.getContentKr() != null) {
-                    existingInstitution.setContentKr(institution.getContentKr());
-                }
-                if (institution.getLogoName() != null) {
-                    existingInstitution.setLogoName(institution.getLogoName());
-                }
-                if (institution.getLogoData() != null) {
-                    existingInstitution.setLogoData(institution.getLogoData());
-                }
+                institutionMapper.partialUpdate(existingInstitution, institutionDTO);
 
                 return existingInstitution;
             })
-            .map(institutionRepository::save);
+            .map(institutionRepository::save)
+            .map(institutionMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Institution> findAll() {
+    public List<InstitutionDTO> findAll() {
         log.debug("Request to get all Institutions");
-        return institutionRepository.findAll();
+        return institutionRepository.findAll().stream().map(institutionMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Institution> findOne(Long id) {
+    public Optional<InstitutionDTO> findOne(Long id) {
         log.debug("Request to get Institution : {}", id);
-        return institutionRepository.findById(id);
+        return institutionRepository.findById(id).map(institutionMapper::toDto);
     }
 
     @Override

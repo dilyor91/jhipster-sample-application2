@@ -21,6 +21,8 @@ import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.WorkPlan;
 import uz.tashkec.domain.enumeration.PlanType;
 import uz.tashkec.repository.WorkPlanRepository;
+import uz.tashkec.service.dto.WorkPlanDTO;
+import uz.tashkec.service.mapper.WorkPlanMapper;
 
 /**
  * Integration tests for the {@link WorkPlanResource} REST controller.
@@ -59,6 +61,9 @@ class WorkPlanResourceIT {
 
     @Autowired
     private WorkPlanRepository workPlanRepository;
+
+    @Autowired
+    private WorkPlanMapper workPlanMapper;
 
     @Autowired
     private EntityManager em;
@@ -114,8 +119,9 @@ class WorkPlanResourceIT {
     void createWorkPlan() throws Exception {
         int databaseSizeBeforeCreate = workPlanRepository.findAll().size();
         // Create the WorkPlan
+        WorkPlanDTO workPlanDTO = workPlanMapper.toDto(workPlan);
         restWorkPlanMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(workPlan)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(workPlanDTO)))
             .andExpect(status().isCreated());
 
         // Validate the WorkPlan in the database
@@ -136,12 +142,13 @@ class WorkPlanResourceIT {
     void createWorkPlanWithExistingId() throws Exception {
         // Create the WorkPlan with an existing ID
         workPlan.setId(1L);
+        WorkPlanDTO workPlanDTO = workPlanMapper.toDto(workPlan);
 
         int databaseSizeBeforeCreate = workPlanRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restWorkPlanMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(workPlan)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(workPlanDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the WorkPlan in the database
@@ -218,12 +225,13 @@ class WorkPlanResourceIT {
             .contentRu(UPDATED_CONTENT_RU)
             .contentKr(UPDATED_CONTENT_KR)
             .planType(UPDATED_PLAN_TYPE);
+        WorkPlanDTO workPlanDTO = workPlanMapper.toDto(updatedWorkPlan);
 
         restWorkPlanMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedWorkPlan.getId())
+                put(ENTITY_API_URL_ID, workPlanDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedWorkPlan))
+                    .content(TestUtil.convertObjectToJsonBytes(workPlanDTO))
             )
             .andExpect(status().isOk());
 
@@ -246,12 +254,15 @@ class WorkPlanResourceIT {
         int databaseSizeBeforeUpdate = workPlanRepository.findAll().size();
         workPlan.setId(count.incrementAndGet());
 
+        // Create the WorkPlan
+        WorkPlanDTO workPlanDTO = workPlanMapper.toDto(workPlan);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restWorkPlanMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, workPlan.getId())
+                put(ENTITY_API_URL_ID, workPlanDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(workPlan))
+                    .content(TestUtil.convertObjectToJsonBytes(workPlanDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -266,12 +277,15 @@ class WorkPlanResourceIT {
         int databaseSizeBeforeUpdate = workPlanRepository.findAll().size();
         workPlan.setId(count.incrementAndGet());
 
+        // Create the WorkPlan
+        WorkPlanDTO workPlanDTO = workPlanMapper.toDto(workPlan);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restWorkPlanMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(workPlan))
+                    .content(TestUtil.convertObjectToJsonBytes(workPlanDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -286,9 +300,12 @@ class WorkPlanResourceIT {
         int databaseSizeBeforeUpdate = workPlanRepository.findAll().size();
         workPlan.setId(count.incrementAndGet());
 
+        // Create the WorkPlan
+        WorkPlanDTO workPlanDTO = workPlanMapper.toDto(workPlan);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restWorkPlanMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(workPlan)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(workPlanDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the WorkPlan in the database
@@ -383,12 +400,15 @@ class WorkPlanResourceIT {
         int databaseSizeBeforeUpdate = workPlanRepository.findAll().size();
         workPlan.setId(count.incrementAndGet());
 
+        // Create the WorkPlan
+        WorkPlanDTO workPlanDTO = workPlanMapper.toDto(workPlan);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restWorkPlanMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, workPlan.getId())
+                patch(ENTITY_API_URL_ID, workPlanDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(workPlan))
+                    .content(TestUtil.convertObjectToJsonBytes(workPlanDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -403,12 +423,15 @@ class WorkPlanResourceIT {
         int databaseSizeBeforeUpdate = workPlanRepository.findAll().size();
         workPlan.setId(count.incrementAndGet());
 
+        // Create the WorkPlan
+        WorkPlanDTO workPlanDTO = workPlanMapper.toDto(workPlan);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restWorkPlanMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(workPlan))
+                    .content(TestUtil.convertObjectToJsonBytes(workPlanDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -423,9 +446,14 @@ class WorkPlanResourceIT {
         int databaseSizeBeforeUpdate = workPlanRepository.findAll().size();
         workPlan.setId(count.incrementAndGet());
 
+        // Create the WorkPlan
+        WorkPlanDTO workPlanDTO = workPlanMapper.toDto(workPlan);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restWorkPlanMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(workPlan)))
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(workPlanDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the WorkPlan in the database

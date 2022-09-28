@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Region;
+import uz.tashkec.service.dto.RegionDTO;
 
 /**
- * Service Interface for managing {@link Region}.
+ * Service Interface for managing {@link uz.tashkec.domain.Region}.
  */
 public interface RegionService {
     /**
      * Save a region.
      *
-     * @param region the entity to save.
+     * @param regionDTO the entity to save.
      * @return the persisted entity.
      */
-    Region save(Region region);
+    RegionDTO save(RegionDTO regionDTO);
 
     /**
      * Updates a region.
      *
-     * @param region the entity to update.
+     * @param regionDTO the entity to update.
      * @return the persisted entity.
      */
-    Region update(Region region);
+    RegionDTO update(RegionDTO regionDTO);
 
     /**
      * Partially updates a region.
      *
-     * @param region the entity to update partially.
+     * @param regionDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Region> partialUpdate(Region region);
+    Optional<RegionDTO> partialUpdate(RegionDTO regionDTO);
 
     /**
      * Get all the regions.
      *
      * @return the list of entities.
      */
-    List<Region> findAll();
+    List<RegionDTO> findAll();
 
     /**
      * Get the "id" region.
@@ -45,7 +45,7 @@ public interface RegionService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Region> findOne(Long id);
+    Optional<RegionDTO> findOne(Long id);
 
     /**
      * Delete the "id" region.

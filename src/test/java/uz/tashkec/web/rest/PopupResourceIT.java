@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.Popup;
 import uz.tashkec.repository.PopupRepository;
+import uz.tashkec.service.dto.PopupDTO;
+import uz.tashkec.service.mapper.PopupMapper;
 
 /**
  * Integration tests for the {@link PopupResource} REST controller.
@@ -46,6 +48,9 @@ class PopupResourceIT {
 
     @Autowired
     private PopupRepository popupRepository;
+
+    @Autowired
+    private PopupMapper popupMapper;
 
     @Autowired
     private EntityManager em;
@@ -87,8 +92,9 @@ class PopupResourceIT {
     void createPopup() throws Exception {
         int databaseSizeBeforeCreate = popupRepository.findAll().size();
         // Create the Popup
+        PopupDTO popupDTO = popupMapper.toDto(popup);
         restPopupMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(popup)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(popupDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Popup in the database
@@ -105,12 +111,13 @@ class PopupResourceIT {
     void createPopupWithExistingId() throws Exception {
         // Create the Popup with an existing ID
         popup.setId(1L);
+        PopupDTO popupDTO = popupMapper.toDto(popup);
 
         int databaseSizeBeforeCreate = popupRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restPopupMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(popup)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(popupDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Popup in the database
@@ -172,12 +179,13 @@ class PopupResourceIT {
         // Disconnect from session so that the updates on updatedPopup are not directly saved in db
         em.detach(updatedPopup);
         updatedPopup.isImage(UPDATED_IS_IMAGE).videoUrl(UPDATED_VIDEO_URL).redirectUrl(UPDATED_REDIRECT_URL);
+        PopupDTO popupDTO = popupMapper.toDto(updatedPopup);
 
         restPopupMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedPopup.getId())
+                put(ENTITY_API_URL_ID, popupDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedPopup))
+                    .content(TestUtil.convertObjectToJsonBytes(popupDTO))
             )
             .andExpect(status().isOk());
 
@@ -196,12 +204,15 @@ class PopupResourceIT {
         int databaseSizeBeforeUpdate = popupRepository.findAll().size();
         popup.setId(count.incrementAndGet());
 
+        // Create the Popup
+        PopupDTO popupDTO = popupMapper.toDto(popup);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPopupMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, popup.getId())
+                put(ENTITY_API_URL_ID, popupDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(popup))
+                    .content(TestUtil.convertObjectToJsonBytes(popupDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -216,12 +227,15 @@ class PopupResourceIT {
         int databaseSizeBeforeUpdate = popupRepository.findAll().size();
         popup.setId(count.incrementAndGet());
 
+        // Create the Popup
+        PopupDTO popupDTO = popupMapper.toDto(popup);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPopupMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(popup))
+                    .content(TestUtil.convertObjectToJsonBytes(popupDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -236,9 +250,12 @@ class PopupResourceIT {
         int databaseSizeBeforeUpdate = popupRepository.findAll().size();
         popup.setId(count.incrementAndGet());
 
+        // Create the Popup
+        PopupDTO popupDTO = popupMapper.toDto(popup);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPopupMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(popup)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(popupDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Popup in the database
@@ -314,12 +331,15 @@ class PopupResourceIT {
         int databaseSizeBeforeUpdate = popupRepository.findAll().size();
         popup.setId(count.incrementAndGet());
 
+        // Create the Popup
+        PopupDTO popupDTO = popupMapper.toDto(popup);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPopupMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, popup.getId())
+                patch(ENTITY_API_URL_ID, popupDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(popup))
+                    .content(TestUtil.convertObjectToJsonBytes(popupDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -334,12 +354,15 @@ class PopupResourceIT {
         int databaseSizeBeforeUpdate = popupRepository.findAll().size();
         popup.setId(count.incrementAndGet());
 
+        // Create the Popup
+        PopupDTO popupDTO = popupMapper.toDto(popup);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPopupMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(popup))
+                    .content(TestUtil.convertObjectToJsonBytes(popupDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -354,9 +377,12 @@ class PopupResourceIT {
         int databaseSizeBeforeUpdate = popupRepository.findAll().size();
         popup.setId(count.incrementAndGet());
 
+        // Create the Popup
+        PopupDTO popupDTO = popupMapper.toDto(popup);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restPopupMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(popup)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(popupDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Popup in the database

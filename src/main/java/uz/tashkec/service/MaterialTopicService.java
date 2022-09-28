@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.MaterialTopic;
+import uz.tashkec.service.dto.MaterialTopicDTO;
 
 /**
- * Service Interface for managing {@link MaterialTopic}.
+ * Service Interface for managing {@link uz.tashkec.domain.MaterialTopic}.
  */
 public interface MaterialTopicService {
     /**
      * Save a materialTopic.
      *
-     * @param materialTopic the entity to save.
+     * @param materialTopicDTO the entity to save.
      * @return the persisted entity.
      */
-    MaterialTopic save(MaterialTopic materialTopic);
+    MaterialTopicDTO save(MaterialTopicDTO materialTopicDTO);
 
     /**
      * Updates a materialTopic.
      *
-     * @param materialTopic the entity to update.
+     * @param materialTopicDTO the entity to update.
      * @return the persisted entity.
      */
-    MaterialTopic update(MaterialTopic materialTopic);
+    MaterialTopicDTO update(MaterialTopicDTO materialTopicDTO);
 
     /**
      * Partially updates a materialTopic.
      *
-     * @param materialTopic the entity to update partially.
+     * @param materialTopicDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<MaterialTopic> partialUpdate(MaterialTopic materialTopic);
+    Optional<MaterialTopicDTO> partialUpdate(MaterialTopicDTO materialTopicDTO);
 
     /**
      * Get all the materialTopics.
      *
      * @return the list of entities.
      */
-    List<MaterialTopic> findAll();
+    List<MaterialTopicDTO> findAll();
 
     /**
      * Get the "id" materialTopic.
@@ -45,7 +45,7 @@ public interface MaterialTopicService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<MaterialTopic> findOne(Long id);
+    Optional<MaterialTopicDTO> findOne(Long id);
 
     /**
      * Delete the "id" materialTopic.

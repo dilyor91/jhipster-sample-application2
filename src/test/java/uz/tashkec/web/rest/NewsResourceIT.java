@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.News;
 import uz.tashkec.repository.NewsRepository;
+import uz.tashkec.service.dto.NewsDTO;
+import uz.tashkec.service.mapper.NewsMapper;
 
 /**
  * Integration tests for the {@link NewsResource} REST controller.
@@ -63,6 +65,9 @@ class NewsResourceIT {
 
     @Autowired
     private NewsRepository newsRepository;
+
+    @Autowired
+    private NewsMapper newsMapper;
 
     @Autowired
     private EntityManager em;
@@ -120,8 +125,9 @@ class NewsResourceIT {
     void createNews() throws Exception {
         int databaseSizeBeforeCreate = newsRepository.findAll().size();
         // Create the News
+        NewsDTO newsDTO = newsMapper.toDto(news);
         restNewsMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(news)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(newsDTO)))
             .andExpect(status().isCreated());
 
         // Validate the News in the database
@@ -143,12 +149,13 @@ class NewsResourceIT {
     void createNewsWithExistingId() throws Exception {
         // Create the News with an existing ID
         news.setId(1L);
+        NewsDTO newsDTO = newsMapper.toDto(news);
 
         int databaseSizeBeforeCreate = newsRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restNewsMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(news)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(newsDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the News in the database
@@ -228,12 +235,13 @@ class NewsResourceIT {
             .contentKr(UPDATED_CONTENT_KR)
             .postedDate(UPDATED_POSTED_DATE)
             .status(UPDATED_STATUS);
+        NewsDTO newsDTO = newsMapper.toDto(updatedNews);
 
         restNewsMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedNews.getId())
+                put(ENTITY_API_URL_ID, newsDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedNews))
+                    .content(TestUtil.convertObjectToJsonBytes(newsDTO))
             )
             .andExpect(status().isOk());
 
@@ -257,12 +265,15 @@ class NewsResourceIT {
         int databaseSizeBeforeUpdate = newsRepository.findAll().size();
         news.setId(count.incrementAndGet());
 
+        // Create the News
+        NewsDTO newsDTO = newsMapper.toDto(news);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restNewsMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, news.getId())
+                put(ENTITY_API_URL_ID, newsDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(news))
+                    .content(TestUtil.convertObjectToJsonBytes(newsDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -277,12 +288,15 @@ class NewsResourceIT {
         int databaseSizeBeforeUpdate = newsRepository.findAll().size();
         news.setId(count.incrementAndGet());
 
+        // Create the News
+        NewsDTO newsDTO = newsMapper.toDto(news);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restNewsMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(news))
+                    .content(TestUtil.convertObjectToJsonBytes(newsDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -297,9 +311,12 @@ class NewsResourceIT {
         int databaseSizeBeforeUpdate = newsRepository.findAll().size();
         news.setId(count.incrementAndGet());
 
+        // Create the News
+        NewsDTO newsDTO = newsMapper.toDto(news);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restNewsMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(news)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(newsDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the News in the database
@@ -399,12 +416,15 @@ class NewsResourceIT {
         int databaseSizeBeforeUpdate = newsRepository.findAll().size();
         news.setId(count.incrementAndGet());
 
+        // Create the News
+        NewsDTO newsDTO = newsMapper.toDto(news);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restNewsMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, news.getId())
+                patch(ENTITY_API_URL_ID, newsDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(news))
+                    .content(TestUtil.convertObjectToJsonBytes(newsDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -419,12 +439,15 @@ class NewsResourceIT {
         int databaseSizeBeforeUpdate = newsRepository.findAll().size();
         news.setId(count.incrementAndGet());
 
+        // Create the News
+        NewsDTO newsDTO = newsMapper.toDto(news);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restNewsMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(news))
+                    .content(TestUtil.convertObjectToJsonBytes(newsDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -439,9 +462,12 @@ class NewsResourceIT {
         int databaseSizeBeforeUpdate = newsRepository.findAll().size();
         news.setId(count.incrementAndGet());
 
+        // Create the News
+        NewsDTO newsDTO = newsMapper.toDto(news);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restNewsMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(news)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(newsDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the News in the database

@@ -1,7 +1,7 @@
 {
   "applications": "*",
   "changelogDate": "20220928111721",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "banner",
   "fields": [

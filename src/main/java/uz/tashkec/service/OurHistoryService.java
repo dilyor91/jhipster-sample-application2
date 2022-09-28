@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.OurHistory;
+import uz.tashkec.service.dto.OurHistoryDTO;
 
 /**
- * Service Interface for managing {@link OurHistory}.
+ * Service Interface for managing {@link uz.tashkec.domain.OurHistory}.
  */
 public interface OurHistoryService {
     /**
      * Save a ourHistory.
      *
-     * @param ourHistory the entity to save.
+     * @param ourHistoryDTO the entity to save.
      * @return the persisted entity.
      */
-    OurHistory save(OurHistory ourHistory);
+    OurHistoryDTO save(OurHistoryDTO ourHistoryDTO);
 
     /**
      * Updates a ourHistory.
      *
-     * @param ourHistory the entity to update.
+     * @param ourHistoryDTO the entity to update.
      * @return the persisted entity.
      */
-    OurHistory update(OurHistory ourHistory);
+    OurHistoryDTO update(OurHistoryDTO ourHistoryDTO);
 
     /**
      * Partially updates a ourHistory.
      *
-     * @param ourHistory the entity to update partially.
+     * @param ourHistoryDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<OurHistory> partialUpdate(OurHistory ourHistory);
+    Optional<OurHistoryDTO> partialUpdate(OurHistoryDTO ourHistoryDTO);
 
     /**
      * Get all the ourHistories.
      *
      * @return the list of entities.
      */
-    List<OurHistory> findAll();
+    List<OurHistoryDTO> findAll();
 
     /**
      * Get the "id" ourHistory.
@@ -45,7 +45,7 @@ public interface OurHistoryService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<OurHistory> findOne(Long id);
+    Optional<OurHistoryDTO> findOne(Long id);
 
     /**
      * Delete the "id" ourHistory.

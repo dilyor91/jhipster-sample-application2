@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.WorkPlan;
 import uz.tashkec.repository.WorkPlanRepository;
 import uz.tashkec.service.WorkPlanService;
+import uz.tashkec.service.dto.WorkPlanDTO;
+import uz.tashkec.service.mapper.WorkPlanMapper;
 
 /**
  * Service Implementation for managing {@link WorkPlan}.
@@ -21,68 +25,56 @@ public class WorkPlanServiceImpl implements WorkPlanService {
 
     private final WorkPlanRepository workPlanRepository;
 
-    public WorkPlanServiceImpl(WorkPlanRepository workPlanRepository) {
+    private final WorkPlanMapper workPlanMapper;
+
+    public WorkPlanServiceImpl(WorkPlanRepository workPlanRepository, WorkPlanMapper workPlanMapper) {
         this.workPlanRepository = workPlanRepository;
+        this.workPlanMapper = workPlanMapper;
     }
 
     @Override
-    public WorkPlan save(WorkPlan workPlan) {
-        log.debug("Request to save WorkPlan : {}", workPlan);
-        return workPlanRepository.save(workPlan);
+    public WorkPlanDTO save(WorkPlanDTO workPlanDTO) {
+        log.debug("Request to save WorkPlan : {}", workPlanDTO);
+        WorkPlan workPlan = workPlanMapper.toEntity(workPlanDTO);
+        workPlan = workPlanRepository.save(workPlan);
+        return workPlanMapper.toDto(workPlan);
     }
 
     @Override
-    public WorkPlan update(WorkPlan workPlan) {
-        log.debug("Request to update WorkPlan : {}", workPlan);
-        return workPlanRepository.save(workPlan);
+    public WorkPlanDTO update(WorkPlanDTO workPlanDTO) {
+        log.debug("Request to update WorkPlan : {}", workPlanDTO);
+        WorkPlan workPlan = workPlanMapper.toEntity(workPlanDTO);
+        workPlan = workPlanRepository.save(workPlan);
+        return workPlanMapper.toDto(workPlan);
     }
 
     @Override
-    public Optional<WorkPlan> partialUpdate(WorkPlan workPlan) {
-        log.debug("Request to partially update WorkPlan : {}", workPlan);
+    public Optional<WorkPlanDTO> partialUpdate(WorkPlanDTO workPlanDTO) {
+        log.debug("Request to partially update WorkPlan : {}", workPlanDTO);
 
         return workPlanRepository
-            .findById(workPlan.getId())
+            .findById(workPlanDTO.getId())
             .map(existingWorkPlan -> {
-                if (workPlan.getTitleUz() != null) {
-                    existingWorkPlan.setTitleUz(workPlan.getTitleUz());
-                }
-                if (workPlan.getTitleRu() != null) {
-                    existingWorkPlan.setTitleRu(workPlan.getTitleRu());
-                }
-                if (workPlan.getTitleKr() != null) {
-                    existingWorkPlan.setTitleKr(workPlan.getTitleKr());
-                }
-                if (workPlan.getContentUz() != null) {
-                    existingWorkPlan.setContentUz(workPlan.getContentUz());
-                }
-                if (workPlan.getContentRu() != null) {
-                    existingWorkPlan.setContentRu(workPlan.getContentRu());
-                }
-                if (workPlan.getContentKr() != null) {
-                    existingWorkPlan.setContentKr(workPlan.getContentKr());
-                }
-                if (workPlan.getPlanType() != null) {
-                    existingWorkPlan.setPlanType(workPlan.getPlanType());
-                }
+                workPlanMapper.partialUpdate(existingWorkPlan, workPlanDTO);
 
                 return existingWorkPlan;
             })
-            .map(workPlanRepository::save);
+            .map(workPlanRepository::save)
+            .map(workPlanMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<WorkPlan> findAll() {
+    public List<WorkPlanDTO> findAll() {
         log.debug("Request to get all WorkPlans");
-        return workPlanRepository.findAll();
+        return workPlanRepository.findAll().stream().map(workPlanMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<WorkPlan> findOne(Long id) {
+    public Optional<WorkPlanDTO> findOne(Long id) {
         log.debug("Request to get WorkPlan : {}", id);
-        return workPlanRepository.findById(id);
+        return workPlanRepository.findById(id).map(workPlanMapper::toDto);
     }
 
     @Override

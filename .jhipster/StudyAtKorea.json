@@ -1,7 +1,7 @@
 {
   "applications": "*",
   "changelogDate": "20220928111731",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "study_at_korea",
   "fields": [

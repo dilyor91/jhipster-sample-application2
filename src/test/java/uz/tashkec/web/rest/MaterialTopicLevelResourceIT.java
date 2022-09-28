@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.MaterialTopicLevel;
 import uz.tashkec.repository.MaterialTopicLevelRepository;
+import uz.tashkec.service.dto.MaterialTopicLevelDTO;
+import uz.tashkec.service.mapper.MaterialTopicLevelMapper;
 
 /**
  * Integration tests for the {@link MaterialTopicLevelResource} REST controller.
@@ -46,6 +48,9 @@ class MaterialTopicLevelResourceIT {
 
     @Autowired
     private MaterialTopicLevelRepository materialTopicLevelRepository;
+
+    @Autowired
+    private MaterialTopicLevelMapper materialTopicLevelMapper;
 
     @Autowired
     private EntityManager em;
@@ -93,9 +98,12 @@ class MaterialTopicLevelResourceIT {
     void createMaterialTopicLevel() throws Exception {
         int databaseSizeBeforeCreate = materialTopicLevelRepository.findAll().size();
         // Create the MaterialTopicLevel
+        MaterialTopicLevelDTO materialTopicLevelDTO = materialTopicLevelMapper.toDto(materialTopicLevel);
         restMaterialTopicLevelMockMvc
             .perform(
-                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(materialTopicLevel))
+                post(ENTITY_API_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevelDTO))
             )
             .andExpect(status().isCreated());
 
@@ -113,13 +121,16 @@ class MaterialTopicLevelResourceIT {
     void createMaterialTopicLevelWithExistingId() throws Exception {
         // Create the MaterialTopicLevel with an existing ID
         materialTopicLevel.setId(1L);
+        MaterialTopicLevelDTO materialTopicLevelDTO = materialTopicLevelMapper.toDto(materialTopicLevel);
 
         int databaseSizeBeforeCreate = materialTopicLevelRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restMaterialTopicLevelMockMvc
             .perform(
-                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(materialTopicLevel))
+                post(ENTITY_API_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevelDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -182,12 +193,13 @@ class MaterialTopicLevelResourceIT {
         // Disconnect from session so that the updates on updatedMaterialTopicLevel are not directly saved in db
         em.detach(updatedMaterialTopicLevel);
         updatedMaterialTopicLevel.titleUz(UPDATED_TITLE_UZ).titleRu(UPDATED_TITLE_RU).titleKr(UPDATED_TITLE_KR);
+        MaterialTopicLevelDTO materialTopicLevelDTO = materialTopicLevelMapper.toDto(updatedMaterialTopicLevel);
 
         restMaterialTopicLevelMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedMaterialTopicLevel.getId())
+                put(ENTITY_API_URL_ID, materialTopicLevelDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedMaterialTopicLevel))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevelDTO))
             )
             .andExpect(status().isOk());
 
@@ -206,12 +218,15 @@ class MaterialTopicLevelResourceIT {
         int databaseSizeBeforeUpdate = materialTopicLevelRepository.findAll().size();
         materialTopicLevel.setId(count.incrementAndGet());
 
+        // Create the MaterialTopicLevel
+        MaterialTopicLevelDTO materialTopicLevelDTO = materialTopicLevelMapper.toDto(materialTopicLevel);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restMaterialTopicLevelMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, materialTopicLevel.getId())
+                put(ENTITY_API_URL_ID, materialTopicLevelDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevel))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevelDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -226,12 +241,15 @@ class MaterialTopicLevelResourceIT {
         int databaseSizeBeforeUpdate = materialTopicLevelRepository.findAll().size();
         materialTopicLevel.setId(count.incrementAndGet());
 
+        // Create the MaterialTopicLevel
+        MaterialTopicLevelDTO materialTopicLevelDTO = materialTopicLevelMapper.toDto(materialTopicLevel);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMaterialTopicLevelMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevel))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevelDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -246,10 +264,15 @@ class MaterialTopicLevelResourceIT {
         int databaseSizeBeforeUpdate = materialTopicLevelRepository.findAll().size();
         materialTopicLevel.setId(count.incrementAndGet());
 
+        // Create the MaterialTopicLevel
+        MaterialTopicLevelDTO materialTopicLevelDTO = materialTopicLevelMapper.toDto(materialTopicLevel);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMaterialTopicLevelMockMvc
             .perform(
-                put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(materialTopicLevel))
+                put(ENTITY_API_URL)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevelDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 
@@ -326,12 +349,15 @@ class MaterialTopicLevelResourceIT {
         int databaseSizeBeforeUpdate = materialTopicLevelRepository.findAll().size();
         materialTopicLevel.setId(count.incrementAndGet());
 
+        // Create the MaterialTopicLevel
+        MaterialTopicLevelDTO materialTopicLevelDTO = materialTopicLevelMapper.toDto(materialTopicLevel);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restMaterialTopicLevelMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, materialTopicLevel.getId())
+                patch(ENTITY_API_URL_ID, materialTopicLevelDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevel))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevelDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -346,12 +372,15 @@ class MaterialTopicLevelResourceIT {
         int databaseSizeBeforeUpdate = materialTopicLevelRepository.findAll().size();
         materialTopicLevel.setId(count.incrementAndGet());
 
+        // Create the MaterialTopicLevel
+        MaterialTopicLevelDTO materialTopicLevelDTO = materialTopicLevelMapper.toDto(materialTopicLevel);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMaterialTopicLevelMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevel))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevelDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -366,12 +395,15 @@ class MaterialTopicLevelResourceIT {
         int databaseSizeBeforeUpdate = materialTopicLevelRepository.findAll().size();
         materialTopicLevel.setId(count.incrementAndGet());
 
+        // Create the MaterialTopicLevel
+        MaterialTopicLevelDTO materialTopicLevelDTO = materialTopicLevelMapper.toDto(materialTopicLevel);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMaterialTopicLevelMockMvc
             .perform(
                 patch(ENTITY_API_URL)
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevel))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicLevelDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

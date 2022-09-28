@@ -1,7 +1,6 @@
 package uz.tashkec.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +11,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 /**
  * Task entity.\n@author The JHipster team.
  */
-@Schema(description = "Task entity.\n@author The JHipster team.")
 @Entity
 @Table(name = "task")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.AnswerAndQuestion;
+import uz.tashkec.service.dto.AnswerAndQuestionDTO;
 
 /**
- * Service Interface for managing {@link AnswerAndQuestion}.
+ * Service Interface for managing {@link uz.tashkec.domain.AnswerAndQuestion}.
  */
 public interface AnswerAndQuestionService {
     /**
      * Save a answerAndQuestion.
      *
-     * @param answerAndQuestion the entity to save.
+     * @param answerAndQuestionDTO the entity to save.
      * @return the persisted entity.
      */
-    AnswerAndQuestion save(AnswerAndQuestion answerAndQuestion);
+    AnswerAndQuestionDTO save(AnswerAndQuestionDTO answerAndQuestionDTO);
 
     /**
      * Updates a answerAndQuestion.
      *
-     * @param answerAndQuestion the entity to update.
+     * @param answerAndQuestionDTO the entity to update.
      * @return the persisted entity.
      */
-    AnswerAndQuestion update(AnswerAndQuestion answerAndQuestion);
+    AnswerAndQuestionDTO update(AnswerAndQuestionDTO answerAndQuestionDTO);
 
     /**
      * Partially updates a answerAndQuestion.
      *
-     * @param answerAndQuestion the entity to update partially.
+     * @param answerAndQuestionDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<AnswerAndQuestion> partialUpdate(AnswerAndQuestion answerAndQuestion);
+    Optional<AnswerAndQuestionDTO> partialUpdate(AnswerAndQuestionDTO answerAndQuestionDTO);
 
     /**
      * Get all the answerAndQuestions.
      *
      * @return the list of entities.
      */
-    List<AnswerAndQuestion> findAll();
+    List<AnswerAndQuestionDTO> findAll();
 
     /**
      * Get the "id" answerAndQuestion.
@@ -45,7 +45,7 @@ public interface AnswerAndQuestionService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<AnswerAndQuestion> findOne(Long id);
+    Optional<AnswerAndQuestionDTO> findOne(Long id);
 
     /**
      * Delete the "id" answerAndQuestion.

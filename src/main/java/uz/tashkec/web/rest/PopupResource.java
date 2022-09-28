@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.Popup;
 import uz.tashkec.repository.PopupRepository;
 import uz.tashkec.service.PopupService;
+import uz.tashkec.service.dto.PopupDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class PopupResource {
     /**
      * {@code POST  /popups} : Create a new popup.
      *
-     * @param popup the popup to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new popup, or with status {@code 400 (Bad Request)} if the popup has already an ID.
+     * @param popupDTO the popupDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new popupDTO, or with status {@code 400 (Bad Request)} if the popup has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/popups")
-    public ResponseEntity<Popup> createPopup(@RequestBody Popup popup) throws URISyntaxException {
-        log.debug("REST request to save Popup : {}", popup);
-        if (popup.getId() != null) {
+    public ResponseEntity<PopupDTO> createPopup(@RequestBody PopupDTO popupDTO) throws URISyntaxException {
+        log.debug("REST request to save Popup : {}", popupDTO);
+        if (popupDTO.getId() != null) {
             throw new BadRequestAlertException("A new popup cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Popup result = popupService.save(popup);
+        PopupDTO result = popupService.save(popupDTO);
         return ResponseEntity
             .created(new URI("/api/popups/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,21 +63,23 @@ public class PopupResource {
     /**
      * {@code PUT  /popups/:id} : Updates an existing popup.
      *
-     * @param id the id of the popup to save.
-     * @param popup the popup to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated popup,
-     * or with status {@code 400 (Bad Request)} if the popup is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the popup couldn't be updated.
+     * @param id the id of the popupDTO to save.
+     * @param popupDTO the popupDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated popupDTO,
+     * or with status {@code 400 (Bad Request)} if the popupDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the popupDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/popups/{id}")
-    public ResponseEntity<Popup> updatePopup(@PathVariable(value = "id", required = false) final Long id, @RequestBody Popup popup)
-        throws URISyntaxException {
-        log.debug("REST request to update Popup : {}, {}", id, popup);
-        if (popup.getId() == null) {
+    public ResponseEntity<PopupDTO> updatePopup(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody PopupDTO popupDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to update Popup : {}, {}", id, popupDTO);
+        if (popupDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, popup.getId())) {
+        if (!Objects.equals(id, popupDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -85,32 +87,34 @@ public class PopupResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Popup result = popupService.update(popup);
+        PopupDTO result = popupService.update(popupDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, popup.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, popupDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /popups/:id} : Partial updates given fields of an existing popup, field will ignore if it is null
      *
-     * @param id the id of the popup to save.
-     * @param popup the popup to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated popup,
-     * or with status {@code 400 (Bad Request)} if the popup is not valid,
-     * or with status {@code 404 (Not Found)} if the popup is not found,
-     * or with status {@code 500 (Internal Server Error)} if the popup couldn't be updated.
+     * @param id the id of the popupDTO to save.
+     * @param popupDTO the popupDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated popupDTO,
+     * or with status {@code 400 (Bad Request)} if the popupDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the popupDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the popupDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/popups/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Popup> partialUpdatePopup(@PathVariable(value = "id", required = false) final Long id, @RequestBody Popup popup)
-        throws URISyntaxException {
-        log.debug("REST request to partial update Popup partially : {}, {}", id, popup);
-        if (popup.getId() == null) {
+    public ResponseEntity<PopupDTO> partialUpdatePopup(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody PopupDTO popupDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Popup partially : {}, {}", id, popupDTO);
+        if (popupDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, popup.getId())) {
+        if (!Objects.equals(id, popupDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -118,11 +122,11 @@ public class PopupResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Popup> result = popupService.partialUpdate(popup);
+        Optional<PopupDTO> result = popupService.partialUpdate(popupDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, popup.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, popupDTO.getId().toString())
         );
     }
 
@@ -132,7 +136,7 @@ public class PopupResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of popups in body.
      */
     @GetMapping("/popups")
-    public List<Popup> getAllPopups() {
+    public List<PopupDTO> getAllPopups() {
         log.debug("REST request to get all Popups");
         return popupService.findAll();
     }
@@ -140,20 +144,20 @@ public class PopupResource {
     /**
      * {@code GET  /popups/:id} : get the "id" popup.
      *
-     * @param id the id of the popup to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the popup, or with status {@code 404 (Not Found)}.
+     * @param id the id of the popupDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the popupDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/popups/{id}")
-    public ResponseEntity<Popup> getPopup(@PathVariable Long id) {
+    public ResponseEntity<PopupDTO> getPopup(@PathVariable Long id) {
         log.debug("REST request to get Popup : {}", id);
-        Optional<Popup> popup = popupService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(popup);
+        Optional<PopupDTO> popupDTO = popupService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(popupDTO);
     }
 
     /**
      * {@code DELETE  /popups/:id} : delete the "id" popup.
      *
-     * @param id the id of the popup to delete.
+     * @param id the id of the popupDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/popups/{id}")

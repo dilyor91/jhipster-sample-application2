@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Attachment;
+import uz.tashkec.service.dto.AttachmentDTO;
 
 /**
- * Service Interface for managing {@link Attachment}.
+ * Service Interface for managing {@link uz.tashkec.domain.Attachment}.
  */
 public interface AttachmentService {
     /**
      * Save a attachment.
      *
-     * @param attachment the entity to save.
+     * @param attachmentDTO the entity to save.
      * @return the persisted entity.
      */
-    Attachment save(Attachment attachment);
+    AttachmentDTO save(AttachmentDTO attachmentDTO);
 
     /**
      * Updates a attachment.
      *
-     * @param attachment the entity to update.
+     * @param attachmentDTO the entity to update.
      * @return the persisted entity.
      */
-    Attachment update(Attachment attachment);
+    AttachmentDTO update(AttachmentDTO attachmentDTO);
 
     /**
      * Partially updates a attachment.
      *
-     * @param attachment the entity to update partially.
+     * @param attachmentDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Attachment> partialUpdate(Attachment attachment);
+    Optional<AttachmentDTO> partialUpdate(AttachmentDTO attachmentDTO);
 
     /**
      * Get all the attachments.
      *
      * @return the list of entities.
      */
-    List<Attachment> findAll();
+    List<AttachmentDTO> findAll();
 
     /**
      * Get the "id" attachment.
@@ -45,7 +45,7 @@ public interface AttachmentService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Attachment> findOne(Long id);
+    Optional<AttachmentDTO> findOne(Long id);
 
     /**
      * Delete the "id" attachment.

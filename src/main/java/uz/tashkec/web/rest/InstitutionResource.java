@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.Institution;
 import uz.tashkec.repository.InstitutionRepository;
 import uz.tashkec.service.InstitutionService;
+import uz.tashkec.service.dto.InstitutionDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class InstitutionResource {
     /**
      * {@code POST  /institutions} : Create a new institution.
      *
-     * @param institution the institution to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new institution, or with status {@code 400 (Bad Request)} if the institution has already an ID.
+     * @param institutionDTO the institutionDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new institutionDTO, or with status {@code 400 (Bad Request)} if the institution has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/institutions")
-    public ResponseEntity<Institution> createInstitution(@RequestBody Institution institution) throws URISyntaxException {
-        log.debug("REST request to save Institution : {}", institution);
-        if (institution.getId() != null) {
+    public ResponseEntity<InstitutionDTO> createInstitution(@RequestBody InstitutionDTO institutionDTO) throws URISyntaxException {
+        log.debug("REST request to save Institution : {}", institutionDTO);
+        if (institutionDTO.getId() != null) {
             throw new BadRequestAlertException("A new institution cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Institution result = institutionService.save(institution);
+        InstitutionDTO result = institutionService.save(institutionDTO);
         return ResponseEntity
             .created(new URI("/api/institutions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,23 +63,23 @@ public class InstitutionResource {
     /**
      * {@code PUT  /institutions/:id} : Updates an existing institution.
      *
-     * @param id the id of the institution to save.
-     * @param institution the institution to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated institution,
-     * or with status {@code 400 (Bad Request)} if the institution is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the institution couldn't be updated.
+     * @param id the id of the institutionDTO to save.
+     * @param institutionDTO the institutionDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated institutionDTO,
+     * or with status {@code 400 (Bad Request)} if the institutionDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the institutionDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/institutions/{id}")
-    public ResponseEntity<Institution> updateInstitution(
+    public ResponseEntity<InstitutionDTO> updateInstitution(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Institution institution
+        @RequestBody InstitutionDTO institutionDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Institution : {}, {}", id, institution);
-        if (institution.getId() == null) {
+        log.debug("REST request to update Institution : {}, {}", id, institutionDTO);
+        if (institutionDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, institution.getId())) {
+        if (!Objects.equals(id, institutionDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -87,34 +87,34 @@ public class InstitutionResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Institution result = institutionService.update(institution);
+        InstitutionDTO result = institutionService.update(institutionDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, institution.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, institutionDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /institutions/:id} : Partial updates given fields of an existing institution, field will ignore if it is null
      *
-     * @param id the id of the institution to save.
-     * @param institution the institution to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated institution,
-     * or with status {@code 400 (Bad Request)} if the institution is not valid,
-     * or with status {@code 404 (Not Found)} if the institution is not found,
-     * or with status {@code 500 (Internal Server Error)} if the institution couldn't be updated.
+     * @param id the id of the institutionDTO to save.
+     * @param institutionDTO the institutionDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated institutionDTO,
+     * or with status {@code 400 (Bad Request)} if the institutionDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the institutionDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the institutionDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/institutions/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Institution> partialUpdateInstitution(
+    public ResponseEntity<InstitutionDTO> partialUpdateInstitution(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody Institution institution
+        @RequestBody InstitutionDTO institutionDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Institution partially : {}, {}", id, institution);
-        if (institution.getId() == null) {
+        log.debug("REST request to partial update Institution partially : {}, {}", id, institutionDTO);
+        if (institutionDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, institution.getId())) {
+        if (!Objects.equals(id, institutionDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -122,11 +122,11 @@ public class InstitutionResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Institution> result = institutionService.partialUpdate(institution);
+        Optional<InstitutionDTO> result = institutionService.partialUpdate(institutionDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, institution.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, institutionDTO.getId().toString())
         );
     }
 
@@ -136,7 +136,7 @@ public class InstitutionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of institutions in body.
      */
     @GetMapping("/institutions")
-    public List<Institution> getAllInstitutions() {
+    public List<InstitutionDTO> getAllInstitutions() {
         log.debug("REST request to get all Institutions");
         return institutionService.findAll();
     }
@@ -144,20 +144,20 @@ public class InstitutionResource {
     /**
      * {@code GET  /institutions/:id} : get the "id" institution.
      *
-     * @param id the id of the institution to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the institution, or with status {@code 404 (Not Found)}.
+     * @param id the id of the institutionDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the institutionDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/institutions/{id}")
-    public ResponseEntity<Institution> getInstitution(@PathVariable Long id) {
+    public ResponseEntity<InstitutionDTO> getInstitution(@PathVariable Long id) {
         log.debug("REST request to get Institution : {}", id);
-        Optional<Institution> institution = institutionService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(institution);
+        Optional<InstitutionDTO> institutionDTO = institutionService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(institutionDTO);
     }
 
     /**
      * {@code DELETE  /institutions/:id} : delete the "id" institution.
      *
-     * @param id the id of the institution to delete.
+     * @param id the id of the institutionDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/institutions/{id}")

@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.StudyAtKorea;
 import uz.tashkec.repository.StudyAtKoreaRepository;
 import uz.tashkec.service.StudyAtKoreaService;
+import uz.tashkec.service.dto.StudyAtKoreaDTO;
+import uz.tashkec.service.mapper.StudyAtKoreaMapper;
 
 /**
  * Service Implementation for managing {@link StudyAtKorea}.
@@ -21,65 +25,56 @@ public class StudyAtKoreaServiceImpl implements StudyAtKoreaService {
 
     private final StudyAtKoreaRepository studyAtKoreaRepository;
 
-    public StudyAtKoreaServiceImpl(StudyAtKoreaRepository studyAtKoreaRepository) {
+    private final StudyAtKoreaMapper studyAtKoreaMapper;
+
+    public StudyAtKoreaServiceImpl(StudyAtKoreaRepository studyAtKoreaRepository, StudyAtKoreaMapper studyAtKoreaMapper) {
         this.studyAtKoreaRepository = studyAtKoreaRepository;
+        this.studyAtKoreaMapper = studyAtKoreaMapper;
     }
 
     @Override
-    public StudyAtKorea save(StudyAtKorea studyAtKorea) {
-        log.debug("Request to save StudyAtKorea : {}", studyAtKorea);
-        return studyAtKoreaRepository.save(studyAtKorea);
+    public StudyAtKoreaDTO save(StudyAtKoreaDTO studyAtKoreaDTO) {
+        log.debug("Request to save StudyAtKorea : {}", studyAtKoreaDTO);
+        StudyAtKorea studyAtKorea = studyAtKoreaMapper.toEntity(studyAtKoreaDTO);
+        studyAtKorea = studyAtKoreaRepository.save(studyAtKorea);
+        return studyAtKoreaMapper.toDto(studyAtKorea);
     }
 
     @Override
-    public StudyAtKorea update(StudyAtKorea studyAtKorea) {
-        log.debug("Request to update StudyAtKorea : {}", studyAtKorea);
-        return studyAtKoreaRepository.save(studyAtKorea);
+    public StudyAtKoreaDTO update(StudyAtKoreaDTO studyAtKoreaDTO) {
+        log.debug("Request to update StudyAtKorea : {}", studyAtKoreaDTO);
+        StudyAtKorea studyAtKorea = studyAtKoreaMapper.toEntity(studyAtKoreaDTO);
+        studyAtKorea = studyAtKoreaRepository.save(studyAtKorea);
+        return studyAtKoreaMapper.toDto(studyAtKorea);
     }
 
     @Override
-    public Optional<StudyAtKorea> partialUpdate(StudyAtKorea studyAtKorea) {
-        log.debug("Request to partially update StudyAtKorea : {}", studyAtKorea);
+    public Optional<StudyAtKoreaDTO> partialUpdate(StudyAtKoreaDTO studyAtKoreaDTO) {
+        log.debug("Request to partially update StudyAtKorea : {}", studyAtKoreaDTO);
 
         return studyAtKoreaRepository
-            .findById(studyAtKorea.getId())
+            .findById(studyAtKoreaDTO.getId())
             .map(existingStudyAtKorea -> {
-                if (studyAtKorea.getTitleUz() != null) {
-                    existingStudyAtKorea.setTitleUz(studyAtKorea.getTitleUz());
-                }
-                if (studyAtKorea.getTitleRu() != null) {
-                    existingStudyAtKorea.setTitleRu(studyAtKorea.getTitleRu());
-                }
-                if (studyAtKorea.getTitleKr() != null) {
-                    existingStudyAtKorea.setTitleKr(studyAtKorea.getTitleKr());
-                }
-                if (studyAtKorea.getContentUz() != null) {
-                    existingStudyAtKorea.setContentUz(studyAtKorea.getContentUz());
-                }
-                if (studyAtKorea.getContentRu() != null) {
-                    existingStudyAtKorea.setContentRu(studyAtKorea.getContentRu());
-                }
-                if (studyAtKorea.getContentKr() != null) {
-                    existingStudyAtKorea.setContentKr(studyAtKorea.getContentKr());
-                }
+                studyAtKoreaMapper.partialUpdate(existingStudyAtKorea, studyAtKoreaDTO);
 
                 return existingStudyAtKorea;
             })
-            .map(studyAtKoreaRepository::save);
+            .map(studyAtKoreaRepository::save)
+            .map(studyAtKoreaMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<StudyAtKorea> findAll() {
+    public List<StudyAtKoreaDTO> findAll() {
         log.debug("Request to get all StudyAtKoreas");
-        return studyAtKoreaRepository.findAll();
+        return studyAtKoreaRepository.findAll().stream().map(studyAtKoreaMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<StudyAtKorea> findOne(Long id) {
+    public Optional<StudyAtKoreaDTO> findOne(Long id) {
         log.debug("Request to get StudyAtKorea : {}", id);
-        return studyAtKoreaRepository.findById(id);
+        return studyAtKoreaRepository.findById(id).map(studyAtKoreaMapper::toDto);
     }
 
     @Override

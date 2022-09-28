@@ -1,7 +1,7 @@
 {
   "applications": "*",
   "changelogDate": "20220928111739",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "material_topic_level",
   "fields": [

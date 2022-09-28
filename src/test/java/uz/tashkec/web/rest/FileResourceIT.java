@@ -21,6 +21,8 @@ import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.File;
 import uz.tashkec.domain.enumeration.FileEntity;
 import uz.tashkec.repository.FileRepository;
+import uz.tashkec.service.dto.FileDTO;
+import uz.tashkec.service.mapper.FileMapper;
 
 /**
  * Integration tests for the {@link FileResource} REST controller.
@@ -56,6 +58,9 @@ class FileResourceIT {
 
     @Autowired
     private FileRepository fileRepository;
+
+    @Autowired
+    private FileMapper fileMapper;
 
     @Autowired
     private EntityManager em;
@@ -109,8 +114,9 @@ class FileResourceIT {
     void createFile() throws Exception {
         int databaseSizeBeforeCreate = fileRepository.findAll().size();
         // Create the File
+        FileDTO fileDTO = fileMapper.toDto(file);
         restFileMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(file)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
             .andExpect(status().isCreated());
 
         // Validate the File in the database
@@ -130,12 +136,13 @@ class FileResourceIT {
     void createFileWithExistingId() throws Exception {
         // Create the File with an existing ID
         file.setId(1L);
+        FileDTO fileDTO = fileMapper.toDto(file);
 
         int databaseSizeBeforeCreate = fileRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restFileMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(file)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the File in the database
@@ -209,12 +216,13 @@ class FileResourceIT {
             .fileFormat(UPDATED_FILE_FORMAT)
             .filePath(UPDATED_FILE_PATH)
             .fileEntity(UPDATED_FILE_ENTITY);
+        FileDTO fileDTO = fileMapper.toDto(updatedFile);
 
         restFileMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedFile.getId())
+                put(ENTITY_API_URL_ID, fileDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedFile))
+                    .content(TestUtil.convertObjectToJsonBytes(fileDTO))
             )
             .andExpect(status().isOk());
 
@@ -236,12 +244,15 @@ class FileResourceIT {
         int databaseSizeBeforeUpdate = fileRepository.findAll().size();
         file.setId(count.incrementAndGet());
 
+        // Create the File
+        FileDTO fileDTO = fileMapper.toDto(file);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restFileMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, file.getId())
+                put(ENTITY_API_URL_ID, fileDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(file))
+                    .content(TestUtil.convertObjectToJsonBytes(fileDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -256,12 +267,15 @@ class FileResourceIT {
         int databaseSizeBeforeUpdate = fileRepository.findAll().size();
         file.setId(count.incrementAndGet());
 
+        // Create the File
+        FileDTO fileDTO = fileMapper.toDto(file);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restFileMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(file))
+                    .content(TestUtil.convertObjectToJsonBytes(fileDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -276,9 +290,12 @@ class FileResourceIT {
         int databaseSizeBeforeUpdate = fileRepository.findAll().size();
         file.setId(count.incrementAndGet());
 
+        // Create the File
+        FileDTO fileDTO = fileMapper.toDto(file);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restFileMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(file)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the File in the database
@@ -366,12 +383,15 @@ class FileResourceIT {
         int databaseSizeBeforeUpdate = fileRepository.findAll().size();
         file.setId(count.incrementAndGet());
 
+        // Create the File
+        FileDTO fileDTO = fileMapper.toDto(file);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restFileMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, file.getId())
+                patch(ENTITY_API_URL_ID, fileDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(file))
+                    .content(TestUtil.convertObjectToJsonBytes(fileDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -386,12 +406,15 @@ class FileResourceIT {
         int databaseSizeBeforeUpdate = fileRepository.findAll().size();
         file.setId(count.incrementAndGet());
 
+        // Create the File
+        FileDTO fileDTO = fileMapper.toDto(file);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restFileMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(file))
+                    .content(TestUtil.convertObjectToJsonBytes(fileDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -406,9 +429,12 @@ class FileResourceIT {
         int databaseSizeBeforeUpdate = fileRepository.findAll().size();
         file.setId(count.incrementAndGet());
 
+        // Create the File
+        FileDTO fileDTO = fileMapper.toDto(file);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restFileMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(file)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(fileDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the File in the database

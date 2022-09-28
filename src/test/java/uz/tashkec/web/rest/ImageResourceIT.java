@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.Image;
 import uz.tashkec.repository.ImageRepository;
+import uz.tashkec.service.dto.ImageDTO;
+import uz.tashkec.service.mapper.ImageMapper;
 
 /**
  * Integration tests for the {@link ImageResource} REST controller.
@@ -49,6 +51,9 @@ class ImageResourceIT {
 
     @Autowired
     private ImageRepository imageRepository;
+
+    @Autowired
+    private ImageMapper imageMapper;
 
     @Autowired
     private EntityManager em;
@@ -98,8 +103,9 @@ class ImageResourceIT {
     void createImage() throws Exception {
         int databaseSizeBeforeCreate = imageRepository.findAll().size();
         // Create the Image
+        ImageDTO imageDTO = imageMapper.toDto(image);
         restImageMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(image)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(imageDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Image in the database
@@ -117,12 +123,13 @@ class ImageResourceIT {
     void createImageWithExistingId() throws Exception {
         // Create the Image with an existing ID
         image.setId(1L);
+        ImageDTO imageDTO = imageMapper.toDto(image);
 
         int databaseSizeBeforeCreate = imageRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restImageMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(image)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(imageDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Image in the database
@@ -186,12 +193,13 @@ class ImageResourceIT {
         // Disconnect from session so that the updates on updatedImage are not directly saved in db
         em.detach(updatedImage);
         updatedImage.orginalName(UPDATED_ORGINAL_NAME).name(UPDATED_NAME).imageData(UPDATED_IMAGE_DATA).mainlyPhoto(UPDATED_MAINLY_PHOTO);
+        ImageDTO imageDTO = imageMapper.toDto(updatedImage);
 
         restImageMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedImage.getId())
+                put(ENTITY_API_URL_ID, imageDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedImage))
+                    .content(TestUtil.convertObjectToJsonBytes(imageDTO))
             )
             .andExpect(status().isOk());
 
@@ -211,12 +219,15 @@ class ImageResourceIT {
         int databaseSizeBeforeUpdate = imageRepository.findAll().size();
         image.setId(count.incrementAndGet());
 
+        // Create the Image
+        ImageDTO imageDTO = imageMapper.toDto(image);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restImageMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, image.getId())
+                put(ENTITY_API_URL_ID, imageDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(image))
+                    .content(TestUtil.convertObjectToJsonBytes(imageDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -231,12 +242,15 @@ class ImageResourceIT {
         int databaseSizeBeforeUpdate = imageRepository.findAll().size();
         image.setId(count.incrementAndGet());
 
+        // Create the Image
+        ImageDTO imageDTO = imageMapper.toDto(image);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restImageMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(image))
+                    .content(TestUtil.convertObjectToJsonBytes(imageDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -251,9 +265,12 @@ class ImageResourceIT {
         int databaseSizeBeforeUpdate = imageRepository.findAll().size();
         image.setId(count.incrementAndGet());
 
+        // Create the Image
+        ImageDTO imageDTO = imageMapper.toDto(image);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restImageMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(image)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(imageDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Image in the database
@@ -335,12 +352,15 @@ class ImageResourceIT {
         int databaseSizeBeforeUpdate = imageRepository.findAll().size();
         image.setId(count.incrementAndGet());
 
+        // Create the Image
+        ImageDTO imageDTO = imageMapper.toDto(image);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restImageMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, image.getId())
+                patch(ENTITY_API_URL_ID, imageDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(image))
+                    .content(TestUtil.convertObjectToJsonBytes(imageDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -355,12 +375,15 @@ class ImageResourceIT {
         int databaseSizeBeforeUpdate = imageRepository.findAll().size();
         image.setId(count.incrementAndGet());
 
+        // Create the Image
+        ImageDTO imageDTO = imageMapper.toDto(image);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restImageMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(image))
+                    .content(TestUtil.convertObjectToJsonBytes(imageDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -375,9 +398,12 @@ class ImageResourceIT {
         int databaseSizeBeforeUpdate = imageRepository.findAll().size();
         image.setId(count.incrementAndGet());
 
+        // Create the Image
+        ImageDTO imageDTO = imageMapper.toDto(image);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restImageMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(image)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(imageDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Image in the database

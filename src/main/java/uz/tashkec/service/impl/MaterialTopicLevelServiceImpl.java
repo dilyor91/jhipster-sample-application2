@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.MaterialTopicLevel;
 import uz.tashkec.repository.MaterialTopicLevelRepository;
 import uz.tashkec.service.MaterialTopicLevelService;
+import uz.tashkec.service.dto.MaterialTopicLevelDTO;
+import uz.tashkec.service.mapper.MaterialTopicLevelMapper;
 
 /**
  * Service Implementation for managing {@link MaterialTopicLevel}.
@@ -21,56 +25,63 @@ public class MaterialTopicLevelServiceImpl implements MaterialTopicLevelService 
 
     private final MaterialTopicLevelRepository materialTopicLevelRepository;
 
-    public MaterialTopicLevelServiceImpl(MaterialTopicLevelRepository materialTopicLevelRepository) {
+    private final MaterialTopicLevelMapper materialTopicLevelMapper;
+
+    public MaterialTopicLevelServiceImpl(
+        MaterialTopicLevelRepository materialTopicLevelRepository,
+        MaterialTopicLevelMapper materialTopicLevelMapper
+    ) {
         this.materialTopicLevelRepository = materialTopicLevelRepository;
+        this.materialTopicLevelMapper = materialTopicLevelMapper;
     }
 
     @Override
-    public MaterialTopicLevel save(MaterialTopicLevel materialTopicLevel) {
-        log.debug("Request to save MaterialTopicLevel : {}", materialTopicLevel);
-        return materialTopicLevelRepository.save(materialTopicLevel);
+    public MaterialTopicLevelDTO save(MaterialTopicLevelDTO materialTopicLevelDTO) {
+        log.debug("Request to save MaterialTopicLevel : {}", materialTopicLevelDTO);
+        MaterialTopicLevel materialTopicLevel = materialTopicLevelMapper.toEntity(materialTopicLevelDTO);
+        materialTopicLevel = materialTopicLevelRepository.save(materialTopicLevel);
+        return materialTopicLevelMapper.toDto(materialTopicLevel);
     }
 
     @Override
-    public MaterialTopicLevel update(MaterialTopicLevel materialTopicLevel) {
-        log.debug("Request to update MaterialTopicLevel : {}", materialTopicLevel);
-        return materialTopicLevelRepository.save(materialTopicLevel);
+    public MaterialTopicLevelDTO update(MaterialTopicLevelDTO materialTopicLevelDTO) {
+        log.debug("Request to update MaterialTopicLevel : {}", materialTopicLevelDTO);
+        MaterialTopicLevel materialTopicLevel = materialTopicLevelMapper.toEntity(materialTopicLevelDTO);
+        materialTopicLevel = materialTopicLevelRepository.save(materialTopicLevel);
+        return materialTopicLevelMapper.toDto(materialTopicLevel);
     }
 
     @Override
-    public Optional<MaterialTopicLevel> partialUpdate(MaterialTopicLevel materialTopicLevel) {
-        log.debug("Request to partially update MaterialTopicLevel : {}", materialTopicLevel);
+    public Optional<MaterialTopicLevelDTO> partialUpdate(MaterialTopicLevelDTO materialTopicLevelDTO) {
+        log.debug("Request to partially update MaterialTopicLevel : {}", materialTopicLevelDTO);
 
         return materialTopicLevelRepository
-            .findById(materialTopicLevel.getId())
+            .findById(materialTopicLevelDTO.getId())
             .map(existingMaterialTopicLevel -> {
-                if (materialTopicLevel.getTitleUz() != null) {
-                    existingMaterialTopicLevel.setTitleUz(materialTopicLevel.getTitleUz());
-                }
-                if (materialTopicLevel.getTitleRu() != null) {
-                    existingMaterialTopicLevel.setTitleRu(materialTopicLevel.getTitleRu());
-                }
-                if (materialTopicLevel.getTitleKr() != null) {
-                    existingMaterialTopicLevel.setTitleKr(materialTopicLevel.getTitleKr());
-                }
+                materialTopicLevelMapper.partialUpdate(existingMaterialTopicLevel, materialTopicLevelDTO);
 
                 return existingMaterialTopicLevel;
             })
-            .map(materialTopicLevelRepository::save);
+            .map(materialTopicLevelRepository::save)
+            .map(materialTopicLevelMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<MaterialTopicLevel> findAll() {
+    public List<MaterialTopicLevelDTO> findAll() {
         log.debug("Request to get all MaterialTopicLevels");
-        return materialTopicLevelRepository.findAll();
+        return materialTopicLevelRepository
+            .findAll()
+            .stream()
+            .map(materialTopicLevelMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<MaterialTopicLevel> findOne(Long id) {
+    public Optional<MaterialTopicLevelDTO> findOne(Long id) {
         log.debug("Request to get MaterialTopicLevel : {}", id);
-        return materialTopicLevelRepository.findById(id);
+        return materialTopicLevelRepository.findById(id).map(materialTopicLevelMapper::toDto);
     }
 
     @Override

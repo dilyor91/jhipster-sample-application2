@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.TimeTable;
 import uz.tashkec.repository.TimeTableRepository;
+import uz.tashkec.service.dto.TimeTableDTO;
+import uz.tashkec.service.mapper.TimeTableMapper;
 
 /**
  * Integration tests for the {@link TimeTableResource} REST controller.
@@ -60,6 +62,9 @@ class TimeTableResourceIT {
 
     @Autowired
     private TimeTableRepository timeTableRepository;
+
+    @Autowired
+    private TimeTableMapper timeTableMapper;
 
     @Autowired
     private EntityManager em;
@@ -115,8 +120,9 @@ class TimeTableResourceIT {
     void createTimeTable() throws Exception {
         int databaseSizeBeforeCreate = timeTableRepository.findAll().size();
         // Create the TimeTable
+        TimeTableDTO timeTableDTO = timeTableMapper.toDto(timeTable);
         restTimeTableMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(timeTable)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(timeTableDTO)))
             .andExpect(status().isCreated());
 
         // Validate the TimeTable in the database
@@ -137,12 +143,13 @@ class TimeTableResourceIT {
     void createTimeTableWithExistingId() throws Exception {
         // Create the TimeTable with an existing ID
         timeTable.setId(1L);
+        TimeTableDTO timeTableDTO = timeTableMapper.toDto(timeTable);
 
         int databaseSizeBeforeCreate = timeTableRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTimeTableMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(timeTable)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(timeTableDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the TimeTable in the database
@@ -219,12 +226,13 @@ class TimeTableResourceIT {
             .contentRu(UPDATED_CONTENT_RU)
             .contentKr(UPDATED_CONTENT_KR)
             .postedDate(UPDATED_POSTED_DATE);
+        TimeTableDTO timeTableDTO = timeTableMapper.toDto(updatedTimeTable);
 
         restTimeTableMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedTimeTable.getId())
+                put(ENTITY_API_URL_ID, timeTableDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedTimeTable))
+                    .content(TestUtil.convertObjectToJsonBytes(timeTableDTO))
             )
             .andExpect(status().isOk());
 
@@ -247,12 +255,15 @@ class TimeTableResourceIT {
         int databaseSizeBeforeUpdate = timeTableRepository.findAll().size();
         timeTable.setId(count.incrementAndGet());
 
+        // Create the TimeTable
+        TimeTableDTO timeTableDTO = timeTableMapper.toDto(timeTable);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTimeTableMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, timeTable.getId())
+                put(ENTITY_API_URL_ID, timeTableDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(timeTable))
+                    .content(TestUtil.convertObjectToJsonBytes(timeTableDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -267,12 +278,15 @@ class TimeTableResourceIT {
         int databaseSizeBeforeUpdate = timeTableRepository.findAll().size();
         timeTable.setId(count.incrementAndGet());
 
+        // Create the TimeTable
+        TimeTableDTO timeTableDTO = timeTableMapper.toDto(timeTable);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTimeTableMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(timeTable))
+                    .content(TestUtil.convertObjectToJsonBytes(timeTableDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -287,9 +301,12 @@ class TimeTableResourceIT {
         int databaseSizeBeforeUpdate = timeTableRepository.findAll().size();
         timeTable.setId(count.incrementAndGet());
 
+        // Create the TimeTable
+        TimeTableDTO timeTableDTO = timeTableMapper.toDto(timeTable);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTimeTableMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(timeTable)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(timeTableDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the TimeTable in the database
@@ -380,12 +397,15 @@ class TimeTableResourceIT {
         int databaseSizeBeforeUpdate = timeTableRepository.findAll().size();
         timeTable.setId(count.incrementAndGet());
 
+        // Create the TimeTable
+        TimeTableDTO timeTableDTO = timeTableMapper.toDto(timeTable);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restTimeTableMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, timeTable.getId())
+                patch(ENTITY_API_URL_ID, timeTableDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(timeTable))
+                    .content(TestUtil.convertObjectToJsonBytes(timeTableDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -400,12 +420,15 @@ class TimeTableResourceIT {
         int databaseSizeBeforeUpdate = timeTableRepository.findAll().size();
         timeTable.setId(count.incrementAndGet());
 
+        // Create the TimeTable
+        TimeTableDTO timeTableDTO = timeTableMapper.toDto(timeTable);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTimeTableMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(timeTable))
+                    .content(TestUtil.convertObjectToJsonBytes(timeTableDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -420,10 +443,13 @@ class TimeTableResourceIT {
         int databaseSizeBeforeUpdate = timeTableRepository.findAll().size();
         timeTable.setId(count.incrementAndGet());
 
+        // Create the TimeTable
+        TimeTableDTO timeTableDTO = timeTableMapper.toDto(timeTable);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restTimeTableMockMvc
             .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(timeTable))
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(timeTableDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

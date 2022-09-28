@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Task;
+import uz.tashkec.service.dto.TaskDTO;
 
 /**
- * Service Interface for managing {@link Task}.
+ * Service Interface for managing {@link uz.tashkec.domain.Task}.
  */
 public interface TaskService {
     /**
      * Save a task.
      *
-     * @param task the entity to save.
+     * @param taskDTO the entity to save.
      * @return the persisted entity.
      */
-    Task save(Task task);
+    TaskDTO save(TaskDTO taskDTO);
 
     /**
      * Updates a task.
      *
-     * @param task the entity to update.
+     * @param taskDTO the entity to update.
      * @return the persisted entity.
      */
-    Task update(Task task);
+    TaskDTO update(TaskDTO taskDTO);
 
     /**
      * Partially updates a task.
      *
-     * @param task the entity to update partially.
+     * @param taskDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Task> partialUpdate(Task task);
+    Optional<TaskDTO> partialUpdate(TaskDTO taskDTO);
 
     /**
      * Get all the tasks.
      *
      * @return the list of entities.
      */
-    List<Task> findAll();
+    List<TaskDTO> findAll();
 
     /**
      * Get the "id" task.
@@ -45,7 +45,7 @@ public interface TaskService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Task> findOne(Long id);
+    Optional<TaskDTO> findOne(Long id);
 
     /**
      * Delete the "id" task.

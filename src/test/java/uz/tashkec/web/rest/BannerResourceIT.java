@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.Banner;
 import uz.tashkec.repository.BannerRepository;
+import uz.tashkec.service.dto.BannerDTO;
+import uz.tashkec.service.mapper.BannerMapper;
 
 /**
  * Integration tests for the {@link BannerResource} REST controller.
@@ -46,6 +48,9 @@ class BannerResourceIT {
 
     @Autowired
     private BannerRepository bannerRepository;
+
+    @Autowired
+    private BannerMapper bannerMapper;
 
     @Autowired
     private EntityManager em;
@@ -87,8 +92,9 @@ class BannerResourceIT {
     void createBanner() throws Exception {
         int databaseSizeBeforeCreate = bannerRepository.findAll().size();
         // Create the Banner
+        BannerDTO bannerDTO = bannerMapper.toDto(banner);
         restBannerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(banner)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(bannerDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Banner in the database
@@ -105,12 +111,13 @@ class BannerResourceIT {
     void createBannerWithExistingId() throws Exception {
         // Create the Banner with an existing ID
         banner.setId(1L);
+        BannerDTO bannerDTO = bannerMapper.toDto(banner);
 
         int databaseSizeBeforeCreate = bannerRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restBannerMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(banner)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(bannerDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Banner in the database
@@ -172,12 +179,13 @@ class BannerResourceIT {
         // Disconnect from session so that the updates on updatedBanner are not directly saved in db
         em.detach(updatedBanner);
         updatedBanner.name(UPDATED_NAME).bannerData(UPDATED_BANNER_DATA).status(UPDATED_STATUS);
+        BannerDTO bannerDTO = bannerMapper.toDto(updatedBanner);
 
         restBannerMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedBanner.getId())
+                put(ENTITY_API_URL_ID, bannerDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedBanner))
+                    .content(TestUtil.convertObjectToJsonBytes(bannerDTO))
             )
             .andExpect(status().isOk());
 
@@ -196,12 +204,15 @@ class BannerResourceIT {
         int databaseSizeBeforeUpdate = bannerRepository.findAll().size();
         banner.setId(count.incrementAndGet());
 
+        // Create the Banner
+        BannerDTO bannerDTO = bannerMapper.toDto(banner);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restBannerMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, banner.getId())
+                put(ENTITY_API_URL_ID, bannerDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(banner))
+                    .content(TestUtil.convertObjectToJsonBytes(bannerDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -216,12 +227,15 @@ class BannerResourceIT {
         int databaseSizeBeforeUpdate = bannerRepository.findAll().size();
         banner.setId(count.incrementAndGet());
 
+        // Create the Banner
+        BannerDTO bannerDTO = bannerMapper.toDto(banner);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBannerMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(banner))
+                    .content(TestUtil.convertObjectToJsonBytes(bannerDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -236,9 +250,12 @@ class BannerResourceIT {
         int databaseSizeBeforeUpdate = bannerRepository.findAll().size();
         banner.setId(count.incrementAndGet());
 
+        // Create the Banner
+        BannerDTO bannerDTO = bannerMapper.toDto(banner);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBannerMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(banner)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(bannerDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Banner in the database
@@ -314,12 +331,15 @@ class BannerResourceIT {
         int databaseSizeBeforeUpdate = bannerRepository.findAll().size();
         banner.setId(count.incrementAndGet());
 
+        // Create the Banner
+        BannerDTO bannerDTO = bannerMapper.toDto(banner);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restBannerMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, banner.getId())
+                patch(ENTITY_API_URL_ID, bannerDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(banner))
+                    .content(TestUtil.convertObjectToJsonBytes(bannerDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -334,12 +354,15 @@ class BannerResourceIT {
         int databaseSizeBeforeUpdate = bannerRepository.findAll().size();
         banner.setId(count.incrementAndGet());
 
+        // Create the Banner
+        BannerDTO bannerDTO = bannerMapper.toDto(banner);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBannerMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(banner))
+                    .content(TestUtil.convertObjectToJsonBytes(bannerDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -354,9 +377,14 @@ class BannerResourceIT {
         int databaseSizeBeforeUpdate = bannerRepository.findAll().size();
         banner.setId(count.incrementAndGet());
 
+        // Create the Banner
+        BannerDTO bannerDTO = bannerMapper.toDto(banner);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restBannerMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(banner)))
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(bannerDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Banner in the database
