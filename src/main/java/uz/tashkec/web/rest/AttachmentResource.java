@@ -14,9 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.Attachment;
 import uz.tashkec.repository.AttachmentRepository;
 import uz.tashkec.service.AttachmentService;
+import uz.tashkec.service.dto.AttachmentDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -45,17 +45,17 @@ public class AttachmentResource {
     /**
      * {@code POST  /attachments} : Create a new attachment.
      *
-     * @param attachment the attachment to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new attachment, or with status {@code 400 (Bad Request)} if the attachment has already an ID.
+     * @param attachmentDTO the attachmentDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new attachmentDTO, or with status {@code 400 (Bad Request)} if the attachment has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/attachments")
-    public ResponseEntity<Attachment> createAttachment(@Valid @RequestBody Attachment attachment) throws URISyntaxException {
-        log.debug("REST request to save Attachment : {}", attachment);
-        if (attachment.getId() != null) {
+    public ResponseEntity<AttachmentDTO> createAttachment(@Valid @RequestBody AttachmentDTO attachmentDTO) throws URISyntaxException {
+        log.debug("REST request to save Attachment : {}", attachmentDTO);
+        if (attachmentDTO.getId() != null) {
             throw new BadRequestAlertException("A new attachment cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Attachment result = attachmentService.save(attachment);
+        AttachmentDTO result = attachmentService.save(attachmentDTO);
         return ResponseEntity
             .created(new URI("/api/attachments/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -65,23 +65,23 @@ public class AttachmentResource {
     /**
      * {@code PUT  /attachments/:id} : Updates an existing attachment.
      *
-     * @param id the id of the attachment to save.
-     * @param attachment the attachment to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated attachment,
-     * or with status {@code 400 (Bad Request)} if the attachment is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the attachment couldn't be updated.
+     * @param id the id of the attachmentDTO to save.
+     * @param attachmentDTO the attachmentDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated attachmentDTO,
+     * or with status {@code 400 (Bad Request)} if the attachmentDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the attachmentDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/attachments/{id}")
-    public ResponseEntity<Attachment> updateAttachment(
+    public ResponseEntity<AttachmentDTO> updateAttachment(
         @PathVariable(value = "id", required = false) final Long id,
-        @Valid @RequestBody Attachment attachment
+        @Valid @RequestBody AttachmentDTO attachmentDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update Attachment : {}, {}", id, attachment);
-        if (attachment.getId() == null) {
+        log.debug("REST request to update Attachment : {}, {}", id, attachmentDTO);
+        if (attachmentDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, attachment.getId())) {
+        if (!Objects.equals(id, attachmentDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -89,34 +89,34 @@ public class AttachmentResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Attachment result = attachmentService.update(attachment);
+        AttachmentDTO result = attachmentService.update(attachmentDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, attachment.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, attachmentDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /attachments/:id} : Partial updates given fields of an existing attachment, field will ignore if it is null
      *
-     * @param id the id of the attachment to save.
-     * @param attachment the attachment to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated attachment,
-     * or with status {@code 400 (Bad Request)} if the attachment is not valid,
-     * or with status {@code 404 (Not Found)} if the attachment is not found,
-     * or with status {@code 500 (Internal Server Error)} if the attachment couldn't be updated.
+     * @param id the id of the attachmentDTO to save.
+     * @param attachmentDTO the attachmentDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated attachmentDTO,
+     * or with status {@code 400 (Bad Request)} if the attachmentDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the attachmentDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the attachmentDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/attachments/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Attachment> partialUpdateAttachment(
+    public ResponseEntity<AttachmentDTO> partialUpdateAttachment(
         @PathVariable(value = "id", required = false) final Long id,
-        @NotNull @RequestBody Attachment attachment
+        @NotNull @RequestBody AttachmentDTO attachmentDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update Attachment partially : {}, {}", id, attachment);
-        if (attachment.getId() == null) {
+        log.debug("REST request to partial update Attachment partially : {}, {}", id, attachmentDTO);
+        if (attachmentDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, attachment.getId())) {
+        if (!Objects.equals(id, attachmentDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -124,11 +124,11 @@ public class AttachmentResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Attachment> result = attachmentService.partialUpdate(attachment);
+        Optional<AttachmentDTO> result = attachmentService.partialUpdate(attachmentDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, attachment.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, attachmentDTO.getId().toString())
         );
     }
 
@@ -138,7 +138,7 @@ public class AttachmentResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of attachments in body.
      */
     @GetMapping("/attachments")
-    public List<Attachment> getAllAttachments() {
+    public List<AttachmentDTO> getAllAttachments() {
         log.debug("REST request to get all Attachments");
         return attachmentService.findAll();
     }
@@ -146,20 +146,20 @@ public class AttachmentResource {
     /**
      * {@code GET  /attachments/:id} : get the "id" attachment.
      *
-     * @param id the id of the attachment to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the attachment, or with status {@code 404 (Not Found)}.
+     * @param id the id of the attachmentDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the attachmentDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/attachments/{id}")
-    public ResponseEntity<Attachment> getAttachment(@PathVariable Long id) {
+    public ResponseEntity<AttachmentDTO> getAttachment(@PathVariable Long id) {
         log.debug("REST request to get Attachment : {}", id);
-        Optional<Attachment> attachment = attachmentService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(attachment);
+        Optional<AttachmentDTO> attachmentDTO = attachmentService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(attachmentDTO);
     }
 
     /**
      * {@code DELETE  /attachments/:id} : delete the "id" attachment.
      *
-     * @param id the id of the attachment to delete.
+     * @param id the id of the attachmentDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/attachments/{id}")

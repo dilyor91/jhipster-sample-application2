@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.Album;
 import uz.tashkec.repository.AlbumRepository;
 import uz.tashkec.service.AlbumService;
+import uz.tashkec.service.dto.AlbumDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class AlbumResource {
     /**
      * {@code POST  /albums} : Create a new album.
      *
-     * @param album the album to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new album, or with status {@code 400 (Bad Request)} if the album has already an ID.
+     * @param albumDTO the albumDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new albumDTO, or with status {@code 400 (Bad Request)} if the album has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/albums")
-    public ResponseEntity<Album> createAlbum(@RequestBody Album album) throws URISyntaxException {
-        log.debug("REST request to save Album : {}", album);
-        if (album.getId() != null) {
+    public ResponseEntity<AlbumDTO> createAlbum(@RequestBody AlbumDTO albumDTO) throws URISyntaxException {
+        log.debug("REST request to save Album : {}", albumDTO);
+        if (albumDTO.getId() != null) {
             throw new BadRequestAlertException("A new album cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Album result = albumService.save(album);
+        AlbumDTO result = albumService.save(albumDTO);
         return ResponseEntity
             .created(new URI("/api/albums/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,21 +63,23 @@ public class AlbumResource {
     /**
      * {@code PUT  /albums/:id} : Updates an existing album.
      *
-     * @param id the id of the album to save.
-     * @param album the album to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated album,
-     * or with status {@code 400 (Bad Request)} if the album is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the album couldn't be updated.
+     * @param id the id of the albumDTO to save.
+     * @param albumDTO the albumDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated albumDTO,
+     * or with status {@code 400 (Bad Request)} if the albumDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the albumDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/albums/{id}")
-    public ResponseEntity<Album> updateAlbum(@PathVariable(value = "id", required = false) final Long id, @RequestBody Album album)
-        throws URISyntaxException {
-        log.debug("REST request to update Album : {}, {}", id, album);
-        if (album.getId() == null) {
+    public ResponseEntity<AlbumDTO> updateAlbum(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody AlbumDTO albumDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to update Album : {}, {}", id, albumDTO);
+        if (albumDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, album.getId())) {
+        if (!Objects.equals(id, albumDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -85,32 +87,34 @@ public class AlbumResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Album result = albumService.update(album);
+        AlbumDTO result = albumService.update(albumDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, album.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, albumDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /albums/:id} : Partial updates given fields of an existing album, field will ignore if it is null
      *
-     * @param id the id of the album to save.
-     * @param album the album to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated album,
-     * or with status {@code 400 (Bad Request)} if the album is not valid,
-     * or with status {@code 404 (Not Found)} if the album is not found,
-     * or with status {@code 500 (Internal Server Error)} if the album couldn't be updated.
+     * @param id the id of the albumDTO to save.
+     * @param albumDTO the albumDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated albumDTO,
+     * or with status {@code 400 (Bad Request)} if the albumDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the albumDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the albumDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/albums/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<Album> partialUpdateAlbum(@PathVariable(value = "id", required = false) final Long id, @RequestBody Album album)
-        throws URISyntaxException {
-        log.debug("REST request to partial update Album partially : {}, {}", id, album);
-        if (album.getId() == null) {
+    public ResponseEntity<AlbumDTO> partialUpdateAlbum(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody AlbumDTO albumDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update Album partially : {}, {}", id, albumDTO);
+        if (albumDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, album.getId())) {
+        if (!Objects.equals(id, albumDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -118,11 +122,11 @@ public class AlbumResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<Album> result = albumService.partialUpdate(album);
+        Optional<AlbumDTO> result = albumService.partialUpdate(albumDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, album.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, albumDTO.getId().toString())
         );
     }
 
@@ -132,7 +136,7 @@ public class AlbumResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of albums in body.
      */
     @GetMapping("/albums")
-    public List<Album> getAllAlbums() {
+    public List<AlbumDTO> getAllAlbums() {
         log.debug("REST request to get all Albums");
         return albumService.findAll();
     }
@@ -140,20 +144,20 @@ public class AlbumResource {
     /**
      * {@code GET  /albums/:id} : get the "id" album.
      *
-     * @param id the id of the album to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the album, or with status {@code 404 (Not Found)}.
+     * @param id the id of the albumDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the albumDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/albums/{id}")
-    public ResponseEntity<Album> getAlbum(@PathVariable Long id) {
+    public ResponseEntity<AlbumDTO> getAlbum(@PathVariable Long id) {
         log.debug("REST request to get Album : {}", id);
-        Optional<Album> album = albumService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(album);
+        Optional<AlbumDTO> albumDTO = albumService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(albumDTO);
     }
 
     /**
      * {@code DELETE  /albums/:id} : delete the "id" album.
      *
-     * @param id the id of the album to delete.
+     * @param id the id of the albumDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/albums/{id}")

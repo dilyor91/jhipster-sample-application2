@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.WorkPlan;
+import uz.tashkec.service.dto.WorkPlanDTO;
 
 /**
- * Service Interface for managing {@link WorkPlan}.
+ * Service Interface for managing {@link uz.tashkec.domain.WorkPlan}.
  */
 public interface WorkPlanService {
     /**
      * Save a workPlan.
      *
-     * @param workPlan the entity to save.
+     * @param workPlanDTO the entity to save.
      * @return the persisted entity.
      */
-    WorkPlan save(WorkPlan workPlan);
+    WorkPlanDTO save(WorkPlanDTO workPlanDTO);
 
     /**
      * Updates a workPlan.
      *
-     * @param workPlan the entity to update.
+     * @param workPlanDTO the entity to update.
      * @return the persisted entity.
      */
-    WorkPlan update(WorkPlan workPlan);
+    WorkPlanDTO update(WorkPlanDTO workPlanDTO);
 
     /**
      * Partially updates a workPlan.
      *
-     * @param workPlan the entity to update partially.
+     * @param workPlanDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<WorkPlan> partialUpdate(WorkPlan workPlan);
+    Optional<WorkPlanDTO> partialUpdate(WorkPlanDTO workPlanDTO);
 
     /**
      * Get all the workPlans.
      *
      * @return the list of entities.
      */
-    List<WorkPlan> findAll();
+    List<WorkPlanDTO> findAll();
 
     /**
      * Get the "id" workPlan.
@@ -45,7 +45,7 @@ public interface WorkPlanService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<WorkPlan> findOne(Long id);
+    Optional<WorkPlanDTO> findOne(Long id);
 
     /**
      * Delete the "id" workPlan.

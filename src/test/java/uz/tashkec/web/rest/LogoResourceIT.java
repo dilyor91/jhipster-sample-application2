@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.Logo;
 import uz.tashkec.repository.LogoRepository;
+import uz.tashkec.service.dto.LogoDTO;
+import uz.tashkec.service.mapper.LogoMapper;
 
 /**
  * Integration tests for the {@link LogoResource} REST controller.
@@ -46,6 +48,9 @@ class LogoResourceIT {
 
     @Autowired
     private LogoRepository logoRepository;
+
+    @Autowired
+    private LogoMapper logoMapper;
 
     @Autowired
     private EntityManager em;
@@ -87,8 +92,9 @@ class LogoResourceIT {
     void createLogo() throws Exception {
         int databaseSizeBeforeCreate = logoRepository.findAll().size();
         // Create the Logo
+        LogoDTO logoDTO = logoMapper.toDto(logo);
         restLogoMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(logo)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(logoDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Logo in the database
@@ -105,12 +111,13 @@ class LogoResourceIT {
     void createLogoWithExistingId() throws Exception {
         // Create the Logo with an existing ID
         logo.setId(1L);
+        LogoDTO logoDTO = logoMapper.toDto(logo);
 
         int databaseSizeBeforeCreate = logoRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restLogoMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(logo)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(logoDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Logo in the database
@@ -172,12 +179,13 @@ class LogoResourceIT {
         // Disconnect from session so that the updates on updatedLogo are not directly saved in db
         em.detach(updatedLogo);
         updatedLogo.name(UPDATED_NAME).logoData(UPDATED_LOGO_DATA).status(UPDATED_STATUS);
+        LogoDTO logoDTO = logoMapper.toDto(updatedLogo);
 
         restLogoMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedLogo.getId())
+                put(ENTITY_API_URL_ID, logoDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedLogo))
+                    .content(TestUtil.convertObjectToJsonBytes(logoDTO))
             )
             .andExpect(status().isOk());
 
@@ -196,12 +204,15 @@ class LogoResourceIT {
         int databaseSizeBeforeUpdate = logoRepository.findAll().size();
         logo.setId(count.incrementAndGet());
 
+        // Create the Logo
+        LogoDTO logoDTO = logoMapper.toDto(logo);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLogoMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, logo.getId())
+                put(ENTITY_API_URL_ID, logoDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(logo))
+                    .content(TestUtil.convertObjectToJsonBytes(logoDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -216,12 +227,15 @@ class LogoResourceIT {
         int databaseSizeBeforeUpdate = logoRepository.findAll().size();
         logo.setId(count.incrementAndGet());
 
+        // Create the Logo
+        LogoDTO logoDTO = logoMapper.toDto(logo);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLogoMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(logo))
+                    .content(TestUtil.convertObjectToJsonBytes(logoDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -236,9 +250,12 @@ class LogoResourceIT {
         int databaseSizeBeforeUpdate = logoRepository.findAll().size();
         logo.setId(count.incrementAndGet());
 
+        // Create the Logo
+        LogoDTO logoDTO = logoMapper.toDto(logo);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLogoMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(logo)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(logoDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Logo in the database
@@ -314,12 +331,15 @@ class LogoResourceIT {
         int databaseSizeBeforeUpdate = logoRepository.findAll().size();
         logo.setId(count.incrementAndGet());
 
+        // Create the Logo
+        LogoDTO logoDTO = logoMapper.toDto(logo);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restLogoMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, logo.getId())
+                patch(ENTITY_API_URL_ID, logoDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(logo))
+                    .content(TestUtil.convertObjectToJsonBytes(logoDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -334,12 +354,15 @@ class LogoResourceIT {
         int databaseSizeBeforeUpdate = logoRepository.findAll().size();
         logo.setId(count.incrementAndGet());
 
+        // Create the Logo
+        LogoDTO logoDTO = logoMapper.toDto(logo);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLogoMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(logo))
+                    .content(TestUtil.convertObjectToJsonBytes(logoDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -354,9 +377,12 @@ class LogoResourceIT {
         int databaseSizeBeforeUpdate = logoRepository.findAll().size();
         logo.setId(count.incrementAndGet());
 
+        // Create the Logo
+        LogoDTO logoDTO = logoMapper.toDto(logo);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restLogoMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(logo)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(logoDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Logo in the database

@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Events;
+import uz.tashkec.service.dto.EventsDTO;
 
 /**
- * Service Interface for managing {@link Events}.
+ * Service Interface for managing {@link uz.tashkec.domain.Events}.
  */
 public interface EventsService {
     /**
      * Save a events.
      *
-     * @param events the entity to save.
+     * @param eventsDTO the entity to save.
      * @return the persisted entity.
      */
-    Events save(Events events);
+    EventsDTO save(EventsDTO eventsDTO);
 
     /**
      * Updates a events.
      *
-     * @param events the entity to update.
+     * @param eventsDTO the entity to update.
      * @return the persisted entity.
      */
-    Events update(Events events);
+    EventsDTO update(EventsDTO eventsDTO);
 
     /**
      * Partially updates a events.
      *
-     * @param events the entity to update partially.
+     * @param eventsDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Events> partialUpdate(Events events);
+    Optional<EventsDTO> partialUpdate(EventsDTO eventsDTO);
 
     /**
      * Get all the events.
      *
      * @return the list of entities.
      */
-    List<Events> findAll();
+    List<EventsDTO> findAll();
 
     /**
      * Get the "id" events.
@@ -45,7 +45,7 @@ public interface EventsService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Events> findOne(Long id);
+    Optional<EventsDTO> findOne(Long id);
 
     /**
      * Delete the "id" events.

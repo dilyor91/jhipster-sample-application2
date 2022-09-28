@@ -28,6 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.Job;
 import uz.tashkec.repository.JobRepository;
+import uz.tashkec.service.JobService;
+import uz.tashkec.service.dto.JobDTO;
+import uz.tashkec.service.mapper.JobMapper;
 
 /**
  * Integration tests for the {@link JobResource} REST controller.
@@ -58,6 +61,12 @@ class JobResourceIT {
 
     @Mock
     private JobRepository jobRepositoryMock;
+
+    @Autowired
+    private JobMapper jobMapper;
+
+    @Mock
+    private JobService jobServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -99,8 +108,9 @@ class JobResourceIT {
     void createJob() throws Exception {
         int databaseSizeBeforeCreate = jobRepository.findAll().size();
         // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
         restJobMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(job)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(jobDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Job in the database
@@ -117,12 +127,13 @@ class JobResourceIT {
     void createJobWithExistingId() throws Exception {
         // Create the Job with an existing ID
         job.setId(1L);
+        JobDTO jobDTO = jobMapper.toDto(job);
 
         int databaseSizeBeforeCreate = jobRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restJobMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(job)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(jobDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Job in the database
@@ -149,16 +160,16 @@ class JobResourceIT {
 
     @SuppressWarnings({ "unchecked" })
     void getAllJobsWithEagerRelationshipsIsEnabled() throws Exception {
-        when(jobRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(jobServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restJobMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
 
-        verify(jobRepositoryMock, times(1)).findAllWithEagerRelationships(any());
+        verify(jobServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
     @SuppressWarnings({ "unchecked" })
     void getAllJobsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        when(jobRepositoryMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(jobServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         restJobMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
         verify(jobRepositoryMock, times(1)).findAll(any(Pageable.class));
@@ -201,12 +212,13 @@ class JobResourceIT {
         // Disconnect from session so that the updates on updatedJob are not directly saved in db
         em.detach(updatedJob);
         updatedJob.jobTitle(UPDATED_JOB_TITLE).minSalary(UPDATED_MIN_SALARY).maxSalary(UPDATED_MAX_SALARY);
+        JobDTO jobDTO = jobMapper.toDto(updatedJob);
 
         restJobMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedJob.getId())
+                put(ENTITY_API_URL_ID, jobDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedJob))
+                    .content(TestUtil.convertObjectToJsonBytes(jobDTO))
             )
             .andExpect(status().isOk());
 
@@ -225,10 +237,15 @@ class JobResourceIT {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
         job.setId(count.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, job.getId()).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(job))
+                put(ENTITY_API_URL_ID, jobDTO.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(jobDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -243,12 +260,15 @@ class JobResourceIT {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
         job.setId(count.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(job))
+                    .content(TestUtil.convertObjectToJsonBytes(jobDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -263,9 +283,12 @@ class JobResourceIT {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
         job.setId(count.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(job)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(jobDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Job in the database
@@ -341,12 +364,15 @@ class JobResourceIT {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
         job.setId(count.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, job.getId())
+                patch(ENTITY_API_URL_ID, jobDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(job))
+                    .content(TestUtil.convertObjectToJsonBytes(jobDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -361,12 +387,15 @@ class JobResourceIT {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
         job.setId(count.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(job))
+                    .content(TestUtil.convertObjectToJsonBytes(jobDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -381,9 +410,12 @@ class JobResourceIT {
         int databaseSizeBeforeUpdate = jobRepository.findAll().size();
         job.setId(count.incrementAndGet());
 
+        // Create the Job
+        JobDTO jobDTO = jobMapper.toDto(job);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restJobMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(job)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(jobDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Job in the database

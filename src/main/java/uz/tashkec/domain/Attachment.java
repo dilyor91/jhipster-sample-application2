@@ -1,6 +1,5 @@
 package uz.tashkec.domain;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -10,7 +9,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 /**
  * Файлы. Логотипы также хранятся здесь с типом LOGO
  */
-@Schema(description = "Файлы. Логотипы также хранятся здесь с типом LOGO")
 @Entity
 @Table(name = "attachment")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)

@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.Album;
 import uz.tashkec.repository.AlbumRepository;
+import uz.tashkec.service.dto.AlbumDTO;
+import uz.tashkec.service.mapper.AlbumMapper;
 
 /**
  * Integration tests for the {@link AlbumResource} REST controller.
@@ -46,6 +48,9 @@ class AlbumResourceIT {
 
     @Autowired
     private AlbumRepository albumRepository;
+
+    @Autowired
+    private AlbumMapper albumMapper;
 
     @Autowired
     private EntityManager em;
@@ -87,8 +92,9 @@ class AlbumResourceIT {
     void createAlbum() throws Exception {
         int databaseSizeBeforeCreate = albumRepository.findAll().size();
         // Create the Album
+        AlbumDTO albumDTO = albumMapper.toDto(album);
         restAlbumMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(album)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(albumDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Album in the database
@@ -105,12 +111,13 @@ class AlbumResourceIT {
     void createAlbumWithExistingId() throws Exception {
         // Create the Album with an existing ID
         album.setId(1L);
+        AlbumDTO albumDTO = albumMapper.toDto(album);
 
         int databaseSizeBeforeCreate = albumRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restAlbumMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(album)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(albumDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Album in the database
@@ -172,12 +179,13 @@ class AlbumResourceIT {
         // Disconnect from session so that the updates on updatedAlbum are not directly saved in db
         em.detach(updatedAlbum);
         updatedAlbum.titleUz(UPDATED_TITLE_UZ).titleRu(UPDATED_TITLE_RU).titleKr(UPDATED_TITLE_KR);
+        AlbumDTO albumDTO = albumMapper.toDto(updatedAlbum);
 
         restAlbumMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedAlbum.getId())
+                put(ENTITY_API_URL_ID, albumDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedAlbum))
+                    .content(TestUtil.convertObjectToJsonBytes(albumDTO))
             )
             .andExpect(status().isOk());
 
@@ -196,12 +204,15 @@ class AlbumResourceIT {
         int databaseSizeBeforeUpdate = albumRepository.findAll().size();
         album.setId(count.incrementAndGet());
 
+        // Create the Album
+        AlbumDTO albumDTO = albumMapper.toDto(album);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAlbumMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, album.getId())
+                put(ENTITY_API_URL_ID, albumDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(album))
+                    .content(TestUtil.convertObjectToJsonBytes(albumDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -216,12 +227,15 @@ class AlbumResourceIT {
         int databaseSizeBeforeUpdate = albumRepository.findAll().size();
         album.setId(count.incrementAndGet());
 
+        // Create the Album
+        AlbumDTO albumDTO = albumMapper.toDto(album);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAlbumMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(album))
+                    .content(TestUtil.convertObjectToJsonBytes(albumDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -236,9 +250,12 @@ class AlbumResourceIT {
         int databaseSizeBeforeUpdate = albumRepository.findAll().size();
         album.setId(count.incrementAndGet());
 
+        // Create the Album
+        AlbumDTO albumDTO = albumMapper.toDto(album);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAlbumMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(album)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(albumDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Album in the database
@@ -314,12 +331,15 @@ class AlbumResourceIT {
         int databaseSizeBeforeUpdate = albumRepository.findAll().size();
         album.setId(count.incrementAndGet());
 
+        // Create the Album
+        AlbumDTO albumDTO = albumMapper.toDto(album);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restAlbumMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, album.getId())
+                patch(ENTITY_API_URL_ID, albumDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(album))
+                    .content(TestUtil.convertObjectToJsonBytes(albumDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -334,12 +354,15 @@ class AlbumResourceIT {
         int databaseSizeBeforeUpdate = albumRepository.findAll().size();
         album.setId(count.incrementAndGet());
 
+        // Create the Album
+        AlbumDTO albumDTO = albumMapper.toDto(album);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAlbumMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(album))
+                    .content(TestUtil.convertObjectToJsonBytes(albumDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -354,9 +377,12 @@ class AlbumResourceIT {
         int databaseSizeBeforeUpdate = albumRepository.findAll().size();
         album.setId(count.incrementAndGet());
 
+        // Create the Album
+        AlbumDTO albumDTO = albumMapper.toDto(album);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restAlbumMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(album)))
+            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(albumDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Album in the database

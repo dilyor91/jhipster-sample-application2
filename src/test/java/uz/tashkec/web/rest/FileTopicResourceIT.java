@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.FileTopic;
 import uz.tashkec.repository.FileTopicRepository;
+import uz.tashkec.service.dto.FileTopicDTO;
+import uz.tashkec.service.mapper.FileTopicMapper;
 
 /**
  * Integration tests for the {@link FileTopicResource} REST controller.
@@ -58,6 +60,9 @@ class FileTopicResourceIT {
 
     @Autowired
     private FileTopicRepository fileTopicRepository;
+
+    @Autowired
+    private FileTopicMapper fileTopicMapper;
 
     @Autowired
     private EntityManager em;
@@ -113,8 +118,9 @@ class FileTopicResourceIT {
     void createFileTopic() throws Exception {
         int databaseSizeBeforeCreate = fileTopicRepository.findAll().size();
         // Create the FileTopic
+        FileTopicDTO fileTopicDTO = fileTopicMapper.toDto(fileTopic);
         restFileTopicMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileTopic)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileTopicDTO)))
             .andExpect(status().isCreated());
 
         // Validate the FileTopic in the database
@@ -135,12 +141,13 @@ class FileTopicResourceIT {
     void createFileTopicWithExistingId() throws Exception {
         // Create the FileTopic with an existing ID
         fileTopic.setId(1L);
+        FileTopicDTO fileTopicDTO = fileTopicMapper.toDto(fileTopic);
 
         int databaseSizeBeforeCreate = fileTopicRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restFileTopicMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileTopic)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileTopicDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the FileTopic in the database
@@ -217,12 +224,13 @@ class FileTopicResourceIT {
             .fileType(UPDATED_FILE_TYPE)
             .fileSize(UPDATED_FILE_SIZE)
             .filePath(UPDATED_FILE_PATH);
+        FileTopicDTO fileTopicDTO = fileTopicMapper.toDto(updatedFileTopic);
 
         restFileTopicMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedFileTopic.getId())
+                put(ENTITY_API_URL_ID, fileTopicDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedFileTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(fileTopicDTO))
             )
             .andExpect(status().isOk());
 
@@ -245,12 +253,15 @@ class FileTopicResourceIT {
         int databaseSizeBeforeUpdate = fileTopicRepository.findAll().size();
         fileTopic.setId(count.incrementAndGet());
 
+        // Create the FileTopic
+        FileTopicDTO fileTopicDTO = fileTopicMapper.toDto(fileTopic);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restFileTopicMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, fileTopic.getId())
+                put(ENTITY_API_URL_ID, fileTopicDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(fileTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(fileTopicDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -265,12 +276,15 @@ class FileTopicResourceIT {
         int databaseSizeBeforeUpdate = fileTopicRepository.findAll().size();
         fileTopic.setId(count.incrementAndGet());
 
+        // Create the FileTopic
+        FileTopicDTO fileTopicDTO = fileTopicMapper.toDto(fileTopic);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restFileTopicMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(fileTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(fileTopicDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -285,9 +299,12 @@ class FileTopicResourceIT {
         int databaseSizeBeforeUpdate = fileTopicRepository.findAll().size();
         fileTopic.setId(count.incrementAndGet());
 
+        // Create the FileTopic
+        FileTopicDTO fileTopicDTO = fileTopicMapper.toDto(fileTopic);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restFileTopicMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileTopic)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(fileTopicDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the FileTopic in the database
@@ -378,12 +395,15 @@ class FileTopicResourceIT {
         int databaseSizeBeforeUpdate = fileTopicRepository.findAll().size();
         fileTopic.setId(count.incrementAndGet());
 
+        // Create the FileTopic
+        FileTopicDTO fileTopicDTO = fileTopicMapper.toDto(fileTopic);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restFileTopicMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, fileTopic.getId())
+                patch(ENTITY_API_URL_ID, fileTopicDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(fileTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(fileTopicDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -398,12 +418,15 @@ class FileTopicResourceIT {
         int databaseSizeBeforeUpdate = fileTopicRepository.findAll().size();
         fileTopic.setId(count.incrementAndGet());
 
+        // Create the FileTopic
+        FileTopicDTO fileTopicDTO = fileTopicMapper.toDto(fileTopic);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restFileTopicMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(fileTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(fileTopicDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -418,10 +441,13 @@ class FileTopicResourceIT {
         int databaseSizeBeforeUpdate = fileTopicRepository.findAll().size();
         fileTopic.setId(count.incrementAndGet());
 
+        // Create the FileTopic
+        FileTopicDTO fileTopicDTO = fileTopicMapper.toDto(fileTopic);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restFileTopicMockMvc
             .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(fileTopic))
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(fileTopicDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

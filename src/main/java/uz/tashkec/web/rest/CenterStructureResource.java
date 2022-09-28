@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.CenterStructure;
 import uz.tashkec.repository.CenterStructureRepository;
 import uz.tashkec.service.CenterStructureService;
+import uz.tashkec.service.dto.CenterStructureDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,18 @@ public class CenterStructureResource {
     /**
      * {@code POST  /center-structures} : Create a new centerStructure.
      *
-     * @param centerStructure the centerStructure to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new centerStructure, or with status {@code 400 (Bad Request)} if the centerStructure has already an ID.
+     * @param centerStructureDTO the centerStructureDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new centerStructureDTO, or with status {@code 400 (Bad Request)} if the centerStructure has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/center-structures")
-    public ResponseEntity<CenterStructure> createCenterStructure(@RequestBody CenterStructure centerStructure) throws URISyntaxException {
-        log.debug("REST request to save CenterStructure : {}", centerStructure);
-        if (centerStructure.getId() != null) {
+    public ResponseEntity<CenterStructureDTO> createCenterStructure(@RequestBody CenterStructureDTO centerStructureDTO)
+        throws URISyntaxException {
+        log.debug("REST request to save CenterStructure : {}", centerStructureDTO);
+        if (centerStructureDTO.getId() != null) {
             throw new BadRequestAlertException("A new centerStructure cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        CenterStructure result = centerStructureService.save(centerStructure);
+        CenterStructureDTO result = centerStructureService.save(centerStructureDTO);
         return ResponseEntity
             .created(new URI("/api/center-structures/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,23 +64,23 @@ public class CenterStructureResource {
     /**
      * {@code PUT  /center-structures/:id} : Updates an existing centerStructure.
      *
-     * @param id the id of the centerStructure to save.
-     * @param centerStructure the centerStructure to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated centerStructure,
-     * or with status {@code 400 (Bad Request)} if the centerStructure is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the centerStructure couldn't be updated.
+     * @param id the id of the centerStructureDTO to save.
+     * @param centerStructureDTO the centerStructureDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated centerStructureDTO,
+     * or with status {@code 400 (Bad Request)} if the centerStructureDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the centerStructureDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/center-structures/{id}")
-    public ResponseEntity<CenterStructure> updateCenterStructure(
+    public ResponseEntity<CenterStructureDTO> updateCenterStructure(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody CenterStructure centerStructure
+        @RequestBody CenterStructureDTO centerStructureDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update CenterStructure : {}, {}", id, centerStructure);
-        if (centerStructure.getId() == null) {
+        log.debug("REST request to update CenterStructure : {}, {}", id, centerStructureDTO);
+        if (centerStructureDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, centerStructure.getId())) {
+        if (!Objects.equals(id, centerStructureDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -87,34 +88,34 @@ public class CenterStructureResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        CenterStructure result = centerStructureService.update(centerStructure);
+        CenterStructureDTO result = centerStructureService.update(centerStructureDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, centerStructure.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, centerStructureDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /center-structures/:id} : Partial updates given fields of an existing centerStructure, field will ignore if it is null
      *
-     * @param id the id of the centerStructure to save.
-     * @param centerStructure the centerStructure to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated centerStructure,
-     * or with status {@code 400 (Bad Request)} if the centerStructure is not valid,
-     * or with status {@code 404 (Not Found)} if the centerStructure is not found,
-     * or with status {@code 500 (Internal Server Error)} if the centerStructure couldn't be updated.
+     * @param id the id of the centerStructureDTO to save.
+     * @param centerStructureDTO the centerStructureDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated centerStructureDTO,
+     * or with status {@code 400 (Bad Request)} if the centerStructureDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the centerStructureDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the centerStructureDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/center-structures/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<CenterStructure> partialUpdateCenterStructure(
+    public ResponseEntity<CenterStructureDTO> partialUpdateCenterStructure(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody CenterStructure centerStructure
+        @RequestBody CenterStructureDTO centerStructureDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update CenterStructure partially : {}, {}", id, centerStructure);
-        if (centerStructure.getId() == null) {
+        log.debug("REST request to partial update CenterStructure partially : {}, {}", id, centerStructureDTO);
+        if (centerStructureDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, centerStructure.getId())) {
+        if (!Objects.equals(id, centerStructureDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -122,11 +123,11 @@ public class CenterStructureResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<CenterStructure> result = centerStructureService.partialUpdate(centerStructure);
+        Optional<CenterStructureDTO> result = centerStructureService.partialUpdate(centerStructureDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, centerStructure.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, centerStructureDTO.getId().toString())
         );
     }
 
@@ -136,7 +137,7 @@ public class CenterStructureResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of centerStructures in body.
      */
     @GetMapping("/center-structures")
-    public List<CenterStructure> getAllCenterStructures() {
+    public List<CenterStructureDTO> getAllCenterStructures() {
         log.debug("REST request to get all CenterStructures");
         return centerStructureService.findAll();
     }
@@ -144,20 +145,20 @@ public class CenterStructureResource {
     /**
      * {@code GET  /center-structures/:id} : get the "id" centerStructure.
      *
-     * @param id the id of the centerStructure to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the centerStructure, or with status {@code 404 (Not Found)}.
+     * @param id the id of the centerStructureDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the centerStructureDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/center-structures/{id}")
-    public ResponseEntity<CenterStructure> getCenterStructure(@PathVariable Long id) {
+    public ResponseEntity<CenterStructureDTO> getCenterStructure(@PathVariable Long id) {
         log.debug("REST request to get CenterStructure : {}", id);
-        Optional<CenterStructure> centerStructure = centerStructureService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(centerStructure);
+        Optional<CenterStructureDTO> centerStructureDTO = centerStructureService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(centerStructureDTO);
     }
 
     /**
      * {@code DELETE  /center-structures/:id} : delete the "id" centerStructure.
      *
-     * @param id the id of the centerStructure to delete.
+     * @param id the id of the centerStructureDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/center-structures/{id}")

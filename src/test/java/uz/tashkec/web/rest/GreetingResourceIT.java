@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.Greeting;
 import uz.tashkec.repository.GreetingRepository;
+import uz.tashkec.service.dto.GreetingDTO;
+import uz.tashkec.service.mapper.GreetingMapper;
 
 /**
  * Integration tests for the {@link GreetingResource} REST controller.
@@ -46,6 +48,9 @@ class GreetingResourceIT {
 
     @Autowired
     private GreetingRepository greetingRepository;
+
+    @Autowired
+    private GreetingMapper greetingMapper;
 
     @Autowired
     private EntityManager em;
@@ -87,8 +92,9 @@ class GreetingResourceIT {
     void createGreeting() throws Exception {
         int databaseSizeBeforeCreate = greetingRepository.findAll().size();
         // Create the Greeting
+        GreetingDTO greetingDTO = greetingMapper.toDto(greeting);
         restGreetingMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(greeting)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(greetingDTO)))
             .andExpect(status().isCreated());
 
         // Validate the Greeting in the database
@@ -105,12 +111,13 @@ class GreetingResourceIT {
     void createGreetingWithExistingId() throws Exception {
         // Create the Greeting with an existing ID
         greeting.setId(1L);
+        GreetingDTO greetingDTO = greetingMapper.toDto(greeting);
 
         int databaseSizeBeforeCreate = greetingRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restGreetingMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(greeting)))
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(greetingDTO)))
             .andExpect(status().isBadRequest());
 
         // Validate the Greeting in the database
@@ -172,12 +179,13 @@ class GreetingResourceIT {
         // Disconnect from session so that the updates on updatedGreeting are not directly saved in db
         em.detach(updatedGreeting);
         updatedGreeting.contentUz(UPDATED_CONTENT_UZ).contentRu(UPDATED_CONTENT_RU).contentKr(UPDATED_CONTENT_KR);
+        GreetingDTO greetingDTO = greetingMapper.toDto(updatedGreeting);
 
         restGreetingMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedGreeting.getId())
+                put(ENTITY_API_URL_ID, greetingDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedGreeting))
+                    .content(TestUtil.convertObjectToJsonBytes(greetingDTO))
             )
             .andExpect(status().isOk());
 
@@ -196,12 +204,15 @@ class GreetingResourceIT {
         int databaseSizeBeforeUpdate = greetingRepository.findAll().size();
         greeting.setId(count.incrementAndGet());
 
+        // Create the Greeting
+        GreetingDTO greetingDTO = greetingMapper.toDto(greeting);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restGreetingMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, greeting.getId())
+                put(ENTITY_API_URL_ID, greetingDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(greeting))
+                    .content(TestUtil.convertObjectToJsonBytes(greetingDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -216,12 +227,15 @@ class GreetingResourceIT {
         int databaseSizeBeforeUpdate = greetingRepository.findAll().size();
         greeting.setId(count.incrementAndGet());
 
+        // Create the Greeting
+        GreetingDTO greetingDTO = greetingMapper.toDto(greeting);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restGreetingMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(greeting))
+                    .content(TestUtil.convertObjectToJsonBytes(greetingDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -236,9 +250,12 @@ class GreetingResourceIT {
         int databaseSizeBeforeUpdate = greetingRepository.findAll().size();
         greeting.setId(count.incrementAndGet());
 
+        // Create the Greeting
+        GreetingDTO greetingDTO = greetingMapper.toDto(greeting);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restGreetingMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(greeting)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(greetingDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Greeting in the database
@@ -314,12 +331,15 @@ class GreetingResourceIT {
         int databaseSizeBeforeUpdate = greetingRepository.findAll().size();
         greeting.setId(count.incrementAndGet());
 
+        // Create the Greeting
+        GreetingDTO greetingDTO = greetingMapper.toDto(greeting);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restGreetingMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, greeting.getId())
+                patch(ENTITY_API_URL_ID, greetingDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(greeting))
+                    .content(TestUtil.convertObjectToJsonBytes(greetingDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -334,12 +354,15 @@ class GreetingResourceIT {
         int databaseSizeBeforeUpdate = greetingRepository.findAll().size();
         greeting.setId(count.incrementAndGet());
 
+        // Create the Greeting
+        GreetingDTO greetingDTO = greetingMapper.toDto(greeting);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restGreetingMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(greeting))
+                    .content(TestUtil.convertObjectToJsonBytes(greetingDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -354,9 +377,14 @@ class GreetingResourceIT {
         int databaseSizeBeforeUpdate = greetingRepository.findAll().size();
         greeting.setId(count.incrementAndGet());
 
+        // Create the Greeting
+        GreetingDTO greetingDTO = greetingMapper.toDto(greeting);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restGreetingMockMvc
-            .perform(patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(greeting)))
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(greetingDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Greeting in the database

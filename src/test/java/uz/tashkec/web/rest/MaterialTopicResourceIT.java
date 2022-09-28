@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.MaterialTopic;
 import uz.tashkec.repository.MaterialTopicRepository;
+import uz.tashkec.service.dto.MaterialTopicDTO;
+import uz.tashkec.service.mapper.MaterialTopicMapper;
 
 /**
  * Integration tests for the {@link MaterialTopicResource} REST controller.
@@ -46,6 +48,9 @@ class MaterialTopicResourceIT {
 
     @Autowired
     private MaterialTopicRepository materialTopicRepository;
+
+    @Autowired
+    private MaterialTopicMapper materialTopicMapper;
 
     @Autowired
     private EntityManager em;
@@ -87,8 +92,11 @@ class MaterialTopicResourceIT {
     void createMaterialTopic() throws Exception {
         int databaseSizeBeforeCreate = materialTopicRepository.findAll().size();
         // Create the MaterialTopic
+        MaterialTopicDTO materialTopicDTO = materialTopicMapper.toDto(materialTopic);
         restMaterialTopicMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(materialTopic)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(materialTopicDTO))
+            )
             .andExpect(status().isCreated());
 
         // Validate the MaterialTopic in the database
@@ -105,12 +113,15 @@ class MaterialTopicResourceIT {
     void createMaterialTopicWithExistingId() throws Exception {
         // Create the MaterialTopic with an existing ID
         materialTopic.setId(1L);
+        MaterialTopicDTO materialTopicDTO = materialTopicMapper.toDto(materialTopic);
 
         int databaseSizeBeforeCreate = materialTopicRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restMaterialTopicMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(materialTopic)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(materialTopicDTO))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the MaterialTopic in the database
@@ -172,12 +183,13 @@ class MaterialTopicResourceIT {
         // Disconnect from session so that the updates on updatedMaterialTopic are not directly saved in db
         em.detach(updatedMaterialTopic);
         updatedMaterialTopic.titleUz(UPDATED_TITLE_UZ).titleRu(UPDATED_TITLE_RU).titleKr(UPDATED_TITLE_KR);
+        MaterialTopicDTO materialTopicDTO = materialTopicMapper.toDto(updatedMaterialTopic);
 
         restMaterialTopicMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedMaterialTopic.getId())
+                put(ENTITY_API_URL_ID, materialTopicDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedMaterialTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicDTO))
             )
             .andExpect(status().isOk());
 
@@ -196,12 +208,15 @@ class MaterialTopicResourceIT {
         int databaseSizeBeforeUpdate = materialTopicRepository.findAll().size();
         materialTopic.setId(count.incrementAndGet());
 
+        // Create the MaterialTopic
+        MaterialTopicDTO materialTopicDTO = materialTopicMapper.toDto(materialTopic);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restMaterialTopicMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, materialTopic.getId())
+                put(ENTITY_API_URL_ID, materialTopicDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(materialTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -216,12 +231,15 @@ class MaterialTopicResourceIT {
         int databaseSizeBeforeUpdate = materialTopicRepository.findAll().size();
         materialTopic.setId(count.incrementAndGet());
 
+        // Create the MaterialTopic
+        MaterialTopicDTO materialTopicDTO = materialTopicMapper.toDto(materialTopic);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMaterialTopicMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(materialTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -236,9 +254,14 @@ class MaterialTopicResourceIT {
         int databaseSizeBeforeUpdate = materialTopicRepository.findAll().size();
         materialTopic.setId(count.incrementAndGet());
 
+        // Create the MaterialTopic
+        MaterialTopicDTO materialTopicDTO = materialTopicMapper.toDto(materialTopic);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMaterialTopicMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(materialTopic)))
+            .perform(
+                put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(materialTopicDTO))
+            )
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the MaterialTopic in the database
@@ -314,12 +337,15 @@ class MaterialTopicResourceIT {
         int databaseSizeBeforeUpdate = materialTopicRepository.findAll().size();
         materialTopic.setId(count.incrementAndGet());
 
+        // Create the MaterialTopic
+        MaterialTopicDTO materialTopicDTO = materialTopicMapper.toDto(materialTopic);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restMaterialTopicMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, materialTopic.getId())
+                patch(ENTITY_API_URL_ID, materialTopicDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(materialTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -334,12 +360,15 @@ class MaterialTopicResourceIT {
         int databaseSizeBeforeUpdate = materialTopicRepository.findAll().size();
         materialTopic.setId(count.incrementAndGet());
 
+        // Create the MaterialTopic
+        MaterialTopicDTO materialTopicDTO = materialTopicMapper.toDto(materialTopic);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMaterialTopicMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(materialTopic))
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -354,10 +383,15 @@ class MaterialTopicResourceIT {
         int databaseSizeBeforeUpdate = materialTopicRepository.findAll().size();
         materialTopic.setId(count.incrementAndGet());
 
+        // Create the MaterialTopic
+        MaterialTopicDTO materialTopicDTO = materialTopicMapper.toDto(materialTopic);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restMaterialTopicMockMvc
             .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(materialTopic))
+                patch(ENTITY_API_URL)
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(materialTopicDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

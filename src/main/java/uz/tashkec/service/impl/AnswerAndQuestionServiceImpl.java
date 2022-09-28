@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.AnswerAndQuestion;
 import uz.tashkec.repository.AnswerAndQuestionRepository;
 import uz.tashkec.service.AnswerAndQuestionService;
+import uz.tashkec.service.dto.AnswerAndQuestionDTO;
+import uz.tashkec.service.mapper.AnswerAndQuestionMapper;
 
 /**
  * Service Implementation for managing {@link AnswerAndQuestion}.
@@ -21,65 +25,63 @@ public class AnswerAndQuestionServiceImpl implements AnswerAndQuestionService {
 
     private final AnswerAndQuestionRepository answerAndQuestionRepository;
 
-    public AnswerAndQuestionServiceImpl(AnswerAndQuestionRepository answerAndQuestionRepository) {
+    private final AnswerAndQuestionMapper answerAndQuestionMapper;
+
+    public AnswerAndQuestionServiceImpl(
+        AnswerAndQuestionRepository answerAndQuestionRepository,
+        AnswerAndQuestionMapper answerAndQuestionMapper
+    ) {
         this.answerAndQuestionRepository = answerAndQuestionRepository;
+        this.answerAndQuestionMapper = answerAndQuestionMapper;
     }
 
     @Override
-    public AnswerAndQuestion save(AnswerAndQuestion answerAndQuestion) {
-        log.debug("Request to save AnswerAndQuestion : {}", answerAndQuestion);
-        return answerAndQuestionRepository.save(answerAndQuestion);
+    public AnswerAndQuestionDTO save(AnswerAndQuestionDTO answerAndQuestionDTO) {
+        log.debug("Request to save AnswerAndQuestion : {}", answerAndQuestionDTO);
+        AnswerAndQuestion answerAndQuestion = answerAndQuestionMapper.toEntity(answerAndQuestionDTO);
+        answerAndQuestion = answerAndQuestionRepository.save(answerAndQuestion);
+        return answerAndQuestionMapper.toDto(answerAndQuestion);
     }
 
     @Override
-    public AnswerAndQuestion update(AnswerAndQuestion answerAndQuestion) {
-        log.debug("Request to update AnswerAndQuestion : {}", answerAndQuestion);
-        return answerAndQuestionRepository.save(answerAndQuestion);
+    public AnswerAndQuestionDTO update(AnswerAndQuestionDTO answerAndQuestionDTO) {
+        log.debug("Request to update AnswerAndQuestion : {}", answerAndQuestionDTO);
+        AnswerAndQuestion answerAndQuestion = answerAndQuestionMapper.toEntity(answerAndQuestionDTO);
+        answerAndQuestion = answerAndQuestionRepository.save(answerAndQuestion);
+        return answerAndQuestionMapper.toDto(answerAndQuestion);
     }
 
     @Override
-    public Optional<AnswerAndQuestion> partialUpdate(AnswerAndQuestion answerAndQuestion) {
-        log.debug("Request to partially update AnswerAndQuestion : {}", answerAndQuestion);
+    public Optional<AnswerAndQuestionDTO> partialUpdate(AnswerAndQuestionDTO answerAndQuestionDTO) {
+        log.debug("Request to partially update AnswerAndQuestion : {}", answerAndQuestionDTO);
 
         return answerAndQuestionRepository
-            .findById(answerAndQuestion.getId())
+            .findById(answerAndQuestionDTO.getId())
             .map(existingAnswerAndQuestion -> {
-                if (answerAndQuestion.getQuestionUz() != null) {
-                    existingAnswerAndQuestion.setQuestionUz(answerAndQuestion.getQuestionUz());
-                }
-                if (answerAndQuestion.getQuestionRu() != null) {
-                    existingAnswerAndQuestion.setQuestionRu(answerAndQuestion.getQuestionRu());
-                }
-                if (answerAndQuestion.getQuestionKr() != null) {
-                    existingAnswerAndQuestion.setQuestionKr(answerAndQuestion.getQuestionKr());
-                }
-                if (answerAndQuestion.getAnswerUz() != null) {
-                    existingAnswerAndQuestion.setAnswerUz(answerAndQuestion.getAnswerUz());
-                }
-                if (answerAndQuestion.getAnswerRu() != null) {
-                    existingAnswerAndQuestion.setAnswerRu(answerAndQuestion.getAnswerRu());
-                }
-                if (answerAndQuestion.getAnswerKr() != null) {
-                    existingAnswerAndQuestion.setAnswerKr(answerAndQuestion.getAnswerKr());
-                }
+                answerAndQuestionMapper.partialUpdate(existingAnswerAndQuestion, answerAndQuestionDTO);
 
                 return existingAnswerAndQuestion;
             })
-            .map(answerAndQuestionRepository::save);
+            .map(answerAndQuestionRepository::save)
+            .map(answerAndQuestionMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnswerAndQuestion> findAll() {
+    public List<AnswerAndQuestionDTO> findAll() {
         log.debug("Request to get all AnswerAndQuestions");
-        return answerAndQuestionRepository.findAll();
+        return answerAndQuestionRepository
+            .findAll()
+            .stream()
+            .map(answerAndQuestionMapper::toDto)
+            .collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<AnswerAndQuestion> findOne(Long id) {
+    public Optional<AnswerAndQuestionDTO> findOne(Long id) {
         log.debug("Request to get AnswerAndQuestion : {}", id);
-        return answerAndQuestionRepository.findById(id);
+        return answerAndQuestionRepository.findById(id).map(answerAndQuestionMapper::toDto);
     }
 
     @Override

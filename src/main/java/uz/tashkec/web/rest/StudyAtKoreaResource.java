@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.StudyAtKorea;
 import uz.tashkec.repository.StudyAtKoreaRepository;
 import uz.tashkec.service.StudyAtKoreaService;
+import uz.tashkec.service.dto.StudyAtKoreaDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class StudyAtKoreaResource {
     /**
      * {@code POST  /study-at-koreas} : Create a new studyAtKorea.
      *
-     * @param studyAtKorea the studyAtKorea to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new studyAtKorea, or with status {@code 400 (Bad Request)} if the studyAtKorea has already an ID.
+     * @param studyAtKoreaDTO the studyAtKoreaDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new studyAtKoreaDTO, or with status {@code 400 (Bad Request)} if the studyAtKorea has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/study-at-koreas")
-    public ResponseEntity<StudyAtKorea> createStudyAtKorea(@RequestBody StudyAtKorea studyAtKorea) throws URISyntaxException {
-        log.debug("REST request to save StudyAtKorea : {}", studyAtKorea);
-        if (studyAtKorea.getId() != null) {
+    public ResponseEntity<StudyAtKoreaDTO> createStudyAtKorea(@RequestBody StudyAtKoreaDTO studyAtKoreaDTO) throws URISyntaxException {
+        log.debug("REST request to save StudyAtKorea : {}", studyAtKoreaDTO);
+        if (studyAtKoreaDTO.getId() != null) {
             throw new BadRequestAlertException("A new studyAtKorea cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        StudyAtKorea result = studyAtKoreaService.save(studyAtKorea);
+        StudyAtKoreaDTO result = studyAtKoreaService.save(studyAtKoreaDTO);
         return ResponseEntity
             .created(new URI("/api/study-at-koreas/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,23 +63,23 @@ public class StudyAtKoreaResource {
     /**
      * {@code PUT  /study-at-koreas/:id} : Updates an existing studyAtKorea.
      *
-     * @param id the id of the studyAtKorea to save.
-     * @param studyAtKorea the studyAtKorea to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated studyAtKorea,
-     * or with status {@code 400 (Bad Request)} if the studyAtKorea is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the studyAtKorea couldn't be updated.
+     * @param id the id of the studyAtKoreaDTO to save.
+     * @param studyAtKoreaDTO the studyAtKoreaDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated studyAtKoreaDTO,
+     * or with status {@code 400 (Bad Request)} if the studyAtKoreaDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the studyAtKoreaDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/study-at-koreas/{id}")
-    public ResponseEntity<StudyAtKorea> updateStudyAtKorea(
+    public ResponseEntity<StudyAtKoreaDTO> updateStudyAtKorea(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody StudyAtKorea studyAtKorea
+        @RequestBody StudyAtKoreaDTO studyAtKoreaDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update StudyAtKorea : {}, {}", id, studyAtKorea);
-        if (studyAtKorea.getId() == null) {
+        log.debug("REST request to update StudyAtKorea : {}, {}", id, studyAtKoreaDTO);
+        if (studyAtKoreaDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, studyAtKorea.getId())) {
+        if (!Objects.equals(id, studyAtKoreaDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -87,34 +87,34 @@ public class StudyAtKoreaResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        StudyAtKorea result = studyAtKoreaService.update(studyAtKorea);
+        StudyAtKoreaDTO result = studyAtKoreaService.update(studyAtKoreaDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, studyAtKorea.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, studyAtKoreaDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /study-at-koreas/:id} : Partial updates given fields of an existing studyAtKorea, field will ignore if it is null
      *
-     * @param id the id of the studyAtKorea to save.
-     * @param studyAtKorea the studyAtKorea to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated studyAtKorea,
-     * or with status {@code 400 (Bad Request)} if the studyAtKorea is not valid,
-     * or with status {@code 404 (Not Found)} if the studyAtKorea is not found,
-     * or with status {@code 500 (Internal Server Error)} if the studyAtKorea couldn't be updated.
+     * @param id the id of the studyAtKoreaDTO to save.
+     * @param studyAtKoreaDTO the studyAtKoreaDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated studyAtKoreaDTO,
+     * or with status {@code 400 (Bad Request)} if the studyAtKoreaDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the studyAtKoreaDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the studyAtKoreaDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/study-at-koreas/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<StudyAtKorea> partialUpdateStudyAtKorea(
+    public ResponseEntity<StudyAtKoreaDTO> partialUpdateStudyAtKorea(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody StudyAtKorea studyAtKorea
+        @RequestBody StudyAtKoreaDTO studyAtKoreaDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update StudyAtKorea partially : {}, {}", id, studyAtKorea);
-        if (studyAtKorea.getId() == null) {
+        log.debug("REST request to partial update StudyAtKorea partially : {}, {}", id, studyAtKoreaDTO);
+        if (studyAtKoreaDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, studyAtKorea.getId())) {
+        if (!Objects.equals(id, studyAtKoreaDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -122,11 +122,11 @@ public class StudyAtKoreaResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<StudyAtKorea> result = studyAtKoreaService.partialUpdate(studyAtKorea);
+        Optional<StudyAtKoreaDTO> result = studyAtKoreaService.partialUpdate(studyAtKoreaDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, studyAtKorea.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, studyAtKoreaDTO.getId().toString())
         );
     }
 
@@ -136,7 +136,7 @@ public class StudyAtKoreaResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of studyAtKoreas in body.
      */
     @GetMapping("/study-at-koreas")
-    public List<StudyAtKorea> getAllStudyAtKoreas() {
+    public List<StudyAtKoreaDTO> getAllStudyAtKoreas() {
         log.debug("REST request to get all StudyAtKoreas");
         return studyAtKoreaService.findAll();
     }
@@ -144,20 +144,20 @@ public class StudyAtKoreaResource {
     /**
      * {@code GET  /study-at-koreas/:id} : get the "id" studyAtKorea.
      *
-     * @param id the id of the studyAtKorea to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the studyAtKorea, or with status {@code 404 (Not Found)}.
+     * @param id the id of the studyAtKoreaDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the studyAtKoreaDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/study-at-koreas/{id}")
-    public ResponseEntity<StudyAtKorea> getStudyAtKorea(@PathVariable Long id) {
+    public ResponseEntity<StudyAtKoreaDTO> getStudyAtKorea(@PathVariable Long id) {
         log.debug("REST request to get StudyAtKorea : {}", id);
-        Optional<StudyAtKorea> studyAtKorea = studyAtKoreaService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(studyAtKorea);
+        Optional<StudyAtKoreaDTO> studyAtKoreaDTO = studyAtKoreaService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(studyAtKoreaDTO);
     }
 
     /**
      * {@code DELETE  /study-at-koreas/:id} : delete the "id" studyAtKorea.
      *
-     * @param id the id of the studyAtKorea to delete.
+     * @param id the id of the studyAtKoreaDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/study-at-koreas/{id}")

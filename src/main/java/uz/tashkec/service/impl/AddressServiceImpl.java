@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.Address;
 import uz.tashkec.repository.AddressRepository;
 import uz.tashkec.service.AddressService;
+import uz.tashkec.service.dto.AddressDTO;
+import uz.tashkec.service.mapper.AddressMapper;
 
 /**
  * Service Implementation for managing {@link Address}.
@@ -21,65 +25,56 @@ public class AddressServiceImpl implements AddressService {
 
     private final AddressRepository addressRepository;
 
-    public AddressServiceImpl(AddressRepository addressRepository) {
+    private final AddressMapper addressMapper;
+
+    public AddressServiceImpl(AddressRepository addressRepository, AddressMapper addressMapper) {
         this.addressRepository = addressRepository;
+        this.addressMapper = addressMapper;
     }
 
     @Override
-    public Address save(Address address) {
-        log.debug("Request to save Address : {}", address);
-        return addressRepository.save(address);
+    public AddressDTO save(AddressDTO addressDTO) {
+        log.debug("Request to save Address : {}", addressDTO);
+        Address address = addressMapper.toEntity(addressDTO);
+        address = addressRepository.save(address);
+        return addressMapper.toDto(address);
     }
 
     @Override
-    public Address update(Address address) {
-        log.debug("Request to update Address : {}", address);
-        return addressRepository.save(address);
+    public AddressDTO update(AddressDTO addressDTO) {
+        log.debug("Request to update Address : {}", addressDTO);
+        Address address = addressMapper.toEntity(addressDTO);
+        address = addressRepository.save(address);
+        return addressMapper.toDto(address);
     }
 
     @Override
-    public Optional<Address> partialUpdate(Address address) {
-        log.debug("Request to partially update Address : {}", address);
+    public Optional<AddressDTO> partialUpdate(AddressDTO addressDTO) {
+        log.debug("Request to partially update Address : {}", addressDTO);
 
         return addressRepository
-            .findById(address.getId())
+            .findById(addressDTO.getId())
             .map(existingAddress -> {
-                if (address.getTitleUz() != null) {
-                    existingAddress.setTitleUz(address.getTitleUz());
-                }
-                if (address.getTitleRu() != null) {
-                    existingAddress.setTitleRu(address.getTitleRu());
-                }
-                if (address.getTitleKr() != null) {
-                    existingAddress.setTitleKr(address.getTitleKr());
-                }
-                if (address.getContentUz() != null) {
-                    existingAddress.setContentUz(address.getContentUz());
-                }
-                if (address.getContentRu() != null) {
-                    existingAddress.setContentRu(address.getContentRu());
-                }
-                if (address.getContentKr() != null) {
-                    existingAddress.setContentKr(address.getContentKr());
-                }
+                addressMapper.partialUpdate(existingAddress, addressDTO);
 
                 return existingAddress;
             })
-            .map(addressRepository::save);
+            .map(addressRepository::save)
+            .map(addressMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Address> findAll() {
+    public List<AddressDTO> findAll() {
         log.debug("Request to get all Addresses");
-        return addressRepository.findAll();
+        return addressRepository.findAll().stream().map(addressMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Address> findOne(Long id) {
+    public Optional<AddressDTO> findOne(Long id) {
         log.debug("Request to get Address : {}", id);
-        return addressRepository.findById(id);
+        return addressRepository.findById(id).map(addressMapper::toDto);
     }
 
     @Override

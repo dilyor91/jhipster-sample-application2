@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Banner;
+import uz.tashkec.service.dto.BannerDTO;
 
 /**
- * Service Interface for managing {@link Banner}.
+ * Service Interface for managing {@link uz.tashkec.domain.Banner}.
  */
 public interface BannerService {
     /**
      * Save a banner.
      *
-     * @param banner the entity to save.
+     * @param bannerDTO the entity to save.
      * @return the persisted entity.
      */
-    Banner save(Banner banner);
+    BannerDTO save(BannerDTO bannerDTO);
 
     /**
      * Updates a banner.
      *
-     * @param banner the entity to update.
+     * @param bannerDTO the entity to update.
      * @return the persisted entity.
      */
-    Banner update(Banner banner);
+    BannerDTO update(BannerDTO bannerDTO);
 
     /**
      * Partially updates a banner.
      *
-     * @param banner the entity to update partially.
+     * @param bannerDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Banner> partialUpdate(Banner banner);
+    Optional<BannerDTO> partialUpdate(BannerDTO bannerDTO);
 
     /**
      * Get all the banners.
      *
      * @return the list of entities.
      */
-    List<Banner> findAll();
+    List<BannerDTO> findAll();
 
     /**
      * Get the "id" banner.
@@ -45,7 +45,7 @@ public interface BannerService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Banner> findOne(Long id);
+    Optional<BannerDTO> findOne(Long id);
 
     /**
      * Delete the "id" banner.

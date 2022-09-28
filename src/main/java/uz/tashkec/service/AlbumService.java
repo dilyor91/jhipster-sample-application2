@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Album;
+import uz.tashkec.service.dto.AlbumDTO;
 
 /**
- * Service Interface for managing {@link Album}.
+ * Service Interface for managing {@link uz.tashkec.domain.Album}.
  */
 public interface AlbumService {
     /**
      * Save a album.
      *
-     * @param album the entity to save.
+     * @param albumDTO the entity to save.
      * @return the persisted entity.
      */
-    Album save(Album album);
+    AlbumDTO save(AlbumDTO albumDTO);
 
     /**
      * Updates a album.
      *
-     * @param album the entity to update.
+     * @param albumDTO the entity to update.
      * @return the persisted entity.
      */
-    Album update(Album album);
+    AlbumDTO update(AlbumDTO albumDTO);
 
     /**
      * Partially updates a album.
      *
-     * @param album the entity to update partially.
+     * @param albumDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Album> partialUpdate(Album album);
+    Optional<AlbumDTO> partialUpdate(AlbumDTO albumDTO);
 
     /**
      * Get all the albums.
      *
      * @return the list of entities.
      */
-    List<Album> findAll();
+    List<AlbumDTO> findAll();
 
     /**
      * Get the "id" album.
@@ -45,7 +45,7 @@ public interface AlbumService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Album> findOne(Long id);
+    Optional<AlbumDTO> findOne(Long id);
 
     /**
      * Delete the "id" album.

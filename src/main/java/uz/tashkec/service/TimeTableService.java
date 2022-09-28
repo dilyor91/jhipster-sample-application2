@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.TimeTable;
+import uz.tashkec.service.dto.TimeTableDTO;
 
 /**
- * Service Interface for managing {@link TimeTable}.
+ * Service Interface for managing {@link uz.tashkec.domain.TimeTable}.
  */
 public interface TimeTableService {
     /**
      * Save a timeTable.
      *
-     * @param timeTable the entity to save.
+     * @param timeTableDTO the entity to save.
      * @return the persisted entity.
      */
-    TimeTable save(TimeTable timeTable);
+    TimeTableDTO save(TimeTableDTO timeTableDTO);
 
     /**
      * Updates a timeTable.
      *
-     * @param timeTable the entity to update.
+     * @param timeTableDTO the entity to update.
      * @return the persisted entity.
      */
-    TimeTable update(TimeTable timeTable);
+    TimeTableDTO update(TimeTableDTO timeTableDTO);
 
     /**
      * Partially updates a timeTable.
      *
-     * @param timeTable the entity to update partially.
+     * @param timeTableDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<TimeTable> partialUpdate(TimeTable timeTable);
+    Optional<TimeTableDTO> partialUpdate(TimeTableDTO timeTableDTO);
 
     /**
      * Get all the timeTables.
      *
      * @return the list of entities.
      */
-    List<TimeTable> findAll();
+    List<TimeTableDTO> findAll();
 
     /**
      * Get the "id" timeTable.
@@ -45,7 +45,7 @@ public interface TimeTableService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<TimeTable> findOne(Long id);
+    Optional<TimeTableDTO> findOne(Long id);
 
     /**
      * Delete the "id" timeTable.

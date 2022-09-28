@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.StudyAtKorea;
+import uz.tashkec.service.dto.StudyAtKoreaDTO;
 
 /**
- * Service Interface for managing {@link StudyAtKorea}.
+ * Service Interface for managing {@link uz.tashkec.domain.StudyAtKorea}.
  */
 public interface StudyAtKoreaService {
     /**
      * Save a studyAtKorea.
      *
-     * @param studyAtKorea the entity to save.
+     * @param studyAtKoreaDTO the entity to save.
      * @return the persisted entity.
      */
-    StudyAtKorea save(StudyAtKorea studyAtKorea);
+    StudyAtKoreaDTO save(StudyAtKoreaDTO studyAtKoreaDTO);
 
     /**
      * Updates a studyAtKorea.
      *
-     * @param studyAtKorea the entity to update.
+     * @param studyAtKoreaDTO the entity to update.
      * @return the persisted entity.
      */
-    StudyAtKorea update(StudyAtKorea studyAtKorea);
+    StudyAtKoreaDTO update(StudyAtKoreaDTO studyAtKoreaDTO);
 
     /**
      * Partially updates a studyAtKorea.
      *
-     * @param studyAtKorea the entity to update partially.
+     * @param studyAtKoreaDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<StudyAtKorea> partialUpdate(StudyAtKorea studyAtKorea);
+    Optional<StudyAtKoreaDTO> partialUpdate(StudyAtKoreaDTO studyAtKoreaDTO);
 
     /**
      * Get all the studyAtKoreas.
      *
      * @return the list of entities.
      */
-    List<StudyAtKorea> findAll();
+    List<StudyAtKoreaDTO> findAll();
 
     /**
      * Get the "id" studyAtKorea.
@@ -45,7 +45,7 @@ public interface StudyAtKoreaService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<StudyAtKorea> findOne(Long id);
+    Optional<StudyAtKoreaDTO> findOne(Long id);
 
     /**
      * Delete the "id" studyAtKorea.

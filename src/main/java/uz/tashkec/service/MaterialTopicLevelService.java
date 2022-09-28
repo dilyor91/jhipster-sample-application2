@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.MaterialTopicLevel;
+import uz.tashkec.service.dto.MaterialTopicLevelDTO;
 
 /**
- * Service Interface for managing {@link MaterialTopicLevel}.
+ * Service Interface for managing {@link uz.tashkec.domain.MaterialTopicLevel}.
  */
 public interface MaterialTopicLevelService {
     /**
      * Save a materialTopicLevel.
      *
-     * @param materialTopicLevel the entity to save.
+     * @param materialTopicLevelDTO the entity to save.
      * @return the persisted entity.
      */
-    MaterialTopicLevel save(MaterialTopicLevel materialTopicLevel);
+    MaterialTopicLevelDTO save(MaterialTopicLevelDTO materialTopicLevelDTO);
 
     /**
      * Updates a materialTopicLevel.
      *
-     * @param materialTopicLevel the entity to update.
+     * @param materialTopicLevelDTO the entity to update.
      * @return the persisted entity.
      */
-    MaterialTopicLevel update(MaterialTopicLevel materialTopicLevel);
+    MaterialTopicLevelDTO update(MaterialTopicLevelDTO materialTopicLevelDTO);
 
     /**
      * Partially updates a materialTopicLevel.
      *
-     * @param materialTopicLevel the entity to update partially.
+     * @param materialTopicLevelDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<MaterialTopicLevel> partialUpdate(MaterialTopicLevel materialTopicLevel);
+    Optional<MaterialTopicLevelDTO> partialUpdate(MaterialTopicLevelDTO materialTopicLevelDTO);
 
     /**
      * Get all the materialTopicLevels.
      *
      * @return the list of entities.
      */
-    List<MaterialTopicLevel> findAll();
+    List<MaterialTopicLevelDTO> findAll();
 
     /**
      * Get the "id" materialTopicLevel.
@@ -45,7 +45,7 @@ public interface MaterialTopicLevelService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<MaterialTopicLevel> findOne(Long id);
+    Optional<MaterialTopicLevelDTO> findOne(Long id);
 
     /**
      * Delete the "id" materialTopicLevel.

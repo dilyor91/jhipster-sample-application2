@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.MaterialTopicLevel;
 import uz.tashkec.repository.MaterialTopicLevelRepository;
 import uz.tashkec.service.MaterialTopicLevelService;
+import uz.tashkec.service.dto.MaterialTopicLevelDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -46,18 +46,18 @@ public class MaterialTopicLevelResource {
     /**
      * {@code POST  /material-topic-levels} : Create a new materialTopicLevel.
      *
-     * @param materialTopicLevel the materialTopicLevel to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new materialTopicLevel, or with status {@code 400 (Bad Request)} if the materialTopicLevel has already an ID.
+     * @param materialTopicLevelDTO the materialTopicLevelDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new materialTopicLevelDTO, or with status {@code 400 (Bad Request)} if the materialTopicLevel has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/material-topic-levels")
-    public ResponseEntity<MaterialTopicLevel> createMaterialTopicLevel(@RequestBody MaterialTopicLevel materialTopicLevel)
+    public ResponseEntity<MaterialTopicLevelDTO> createMaterialTopicLevel(@RequestBody MaterialTopicLevelDTO materialTopicLevelDTO)
         throws URISyntaxException {
-        log.debug("REST request to save MaterialTopicLevel : {}", materialTopicLevel);
-        if (materialTopicLevel.getId() != null) {
+        log.debug("REST request to save MaterialTopicLevel : {}", materialTopicLevelDTO);
+        if (materialTopicLevelDTO.getId() != null) {
             throw new BadRequestAlertException("A new materialTopicLevel cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        MaterialTopicLevel result = materialTopicLevelService.save(materialTopicLevel);
+        MaterialTopicLevelDTO result = materialTopicLevelService.save(materialTopicLevelDTO);
         return ResponseEntity
             .created(new URI("/api/material-topic-levels/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -67,23 +67,23 @@ public class MaterialTopicLevelResource {
     /**
      * {@code PUT  /material-topic-levels/:id} : Updates an existing materialTopicLevel.
      *
-     * @param id the id of the materialTopicLevel to save.
-     * @param materialTopicLevel the materialTopicLevel to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated materialTopicLevel,
-     * or with status {@code 400 (Bad Request)} if the materialTopicLevel is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the materialTopicLevel couldn't be updated.
+     * @param id the id of the materialTopicLevelDTO to save.
+     * @param materialTopicLevelDTO the materialTopicLevelDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated materialTopicLevelDTO,
+     * or with status {@code 400 (Bad Request)} if the materialTopicLevelDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the materialTopicLevelDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/material-topic-levels/{id}")
-    public ResponseEntity<MaterialTopicLevel> updateMaterialTopicLevel(
+    public ResponseEntity<MaterialTopicLevelDTO> updateMaterialTopicLevel(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody MaterialTopicLevel materialTopicLevel
+        @RequestBody MaterialTopicLevelDTO materialTopicLevelDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update MaterialTopicLevel : {}, {}", id, materialTopicLevel);
-        if (materialTopicLevel.getId() == null) {
+        log.debug("REST request to update MaterialTopicLevel : {}, {}", id, materialTopicLevelDTO);
+        if (materialTopicLevelDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, materialTopicLevel.getId())) {
+        if (!Objects.equals(id, materialTopicLevelDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -91,34 +91,34 @@ public class MaterialTopicLevelResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        MaterialTopicLevel result = materialTopicLevelService.update(materialTopicLevel);
+        MaterialTopicLevelDTO result = materialTopicLevelService.update(materialTopicLevelDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, materialTopicLevel.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, materialTopicLevelDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /material-topic-levels/:id} : Partial updates given fields of an existing materialTopicLevel, field will ignore if it is null
      *
-     * @param id the id of the materialTopicLevel to save.
-     * @param materialTopicLevel the materialTopicLevel to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated materialTopicLevel,
-     * or with status {@code 400 (Bad Request)} if the materialTopicLevel is not valid,
-     * or with status {@code 404 (Not Found)} if the materialTopicLevel is not found,
-     * or with status {@code 500 (Internal Server Error)} if the materialTopicLevel couldn't be updated.
+     * @param id the id of the materialTopicLevelDTO to save.
+     * @param materialTopicLevelDTO the materialTopicLevelDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated materialTopicLevelDTO,
+     * or with status {@code 400 (Bad Request)} if the materialTopicLevelDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the materialTopicLevelDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the materialTopicLevelDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/material-topic-levels/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<MaterialTopicLevel> partialUpdateMaterialTopicLevel(
+    public ResponseEntity<MaterialTopicLevelDTO> partialUpdateMaterialTopicLevel(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody MaterialTopicLevel materialTopicLevel
+        @RequestBody MaterialTopicLevelDTO materialTopicLevelDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update MaterialTopicLevel partially : {}, {}", id, materialTopicLevel);
-        if (materialTopicLevel.getId() == null) {
+        log.debug("REST request to partial update MaterialTopicLevel partially : {}, {}", id, materialTopicLevelDTO);
+        if (materialTopicLevelDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, materialTopicLevel.getId())) {
+        if (!Objects.equals(id, materialTopicLevelDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -126,11 +126,11 @@ public class MaterialTopicLevelResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<MaterialTopicLevel> result = materialTopicLevelService.partialUpdate(materialTopicLevel);
+        Optional<MaterialTopicLevelDTO> result = materialTopicLevelService.partialUpdate(materialTopicLevelDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, materialTopicLevel.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, materialTopicLevelDTO.getId().toString())
         );
     }
 
@@ -140,7 +140,7 @@ public class MaterialTopicLevelResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of materialTopicLevels in body.
      */
     @GetMapping("/material-topic-levels")
-    public List<MaterialTopicLevel> getAllMaterialTopicLevels() {
+    public List<MaterialTopicLevelDTO> getAllMaterialTopicLevels() {
         log.debug("REST request to get all MaterialTopicLevels");
         return materialTopicLevelService.findAll();
     }
@@ -148,20 +148,20 @@ public class MaterialTopicLevelResource {
     /**
      * {@code GET  /material-topic-levels/:id} : get the "id" materialTopicLevel.
      *
-     * @param id the id of the materialTopicLevel to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the materialTopicLevel, or with status {@code 404 (Not Found)}.
+     * @param id the id of the materialTopicLevelDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the materialTopicLevelDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/material-topic-levels/{id}")
-    public ResponseEntity<MaterialTopicLevel> getMaterialTopicLevel(@PathVariable Long id) {
+    public ResponseEntity<MaterialTopicLevelDTO> getMaterialTopicLevel(@PathVariable Long id) {
         log.debug("REST request to get MaterialTopicLevel : {}", id);
-        Optional<MaterialTopicLevel> materialTopicLevel = materialTopicLevelService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(materialTopicLevel);
+        Optional<MaterialTopicLevelDTO> materialTopicLevelDTO = materialTopicLevelService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(materialTopicLevelDTO);
     }
 
     /**
      * {@code DELETE  /material-topic-levels/:id} : delete the "id" materialTopicLevel.
      *
-     * @param id the id of the materialTopicLevel to delete.
+     * @param id the id of the materialTopicLevelDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/material-topic-levels/{id}")

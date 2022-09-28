@@ -1,7 +1,7 @@
 {
   "applications": "*",
   "changelogDate": "20220928111719",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "popup",
   "fields": [

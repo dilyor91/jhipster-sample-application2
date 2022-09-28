@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.FileTopic;
 import uz.tashkec.repository.FileTopicRepository;
 import uz.tashkec.service.FileTopicService;
+import uz.tashkec.service.dto.FileTopicDTO;
+import uz.tashkec.service.mapper.FileTopicMapper;
 
 /**
  * Service Implementation for managing {@link FileTopic}.
@@ -21,68 +25,56 @@ public class FileTopicServiceImpl implements FileTopicService {
 
     private final FileTopicRepository fileTopicRepository;
 
-    public FileTopicServiceImpl(FileTopicRepository fileTopicRepository) {
+    private final FileTopicMapper fileTopicMapper;
+
+    public FileTopicServiceImpl(FileTopicRepository fileTopicRepository, FileTopicMapper fileTopicMapper) {
         this.fileTopicRepository = fileTopicRepository;
+        this.fileTopicMapper = fileTopicMapper;
     }
 
     @Override
-    public FileTopic save(FileTopic fileTopic) {
-        log.debug("Request to save FileTopic : {}", fileTopic);
-        return fileTopicRepository.save(fileTopic);
+    public FileTopicDTO save(FileTopicDTO fileTopicDTO) {
+        log.debug("Request to save FileTopic : {}", fileTopicDTO);
+        FileTopic fileTopic = fileTopicMapper.toEntity(fileTopicDTO);
+        fileTopic = fileTopicRepository.save(fileTopic);
+        return fileTopicMapper.toDto(fileTopic);
     }
 
     @Override
-    public FileTopic update(FileTopic fileTopic) {
-        log.debug("Request to update FileTopic : {}", fileTopic);
-        return fileTopicRepository.save(fileTopic);
+    public FileTopicDTO update(FileTopicDTO fileTopicDTO) {
+        log.debug("Request to update FileTopic : {}", fileTopicDTO);
+        FileTopic fileTopic = fileTopicMapper.toEntity(fileTopicDTO);
+        fileTopic = fileTopicRepository.save(fileTopic);
+        return fileTopicMapper.toDto(fileTopic);
     }
 
     @Override
-    public Optional<FileTopic> partialUpdate(FileTopic fileTopic) {
-        log.debug("Request to partially update FileTopic : {}", fileTopic);
+    public Optional<FileTopicDTO> partialUpdate(FileTopicDTO fileTopicDTO) {
+        log.debug("Request to partially update FileTopic : {}", fileTopicDTO);
 
         return fileTopicRepository
-            .findById(fileTopic.getId())
+            .findById(fileTopicDTO.getId())
             .map(existingFileTopic -> {
-                if (fileTopic.getFileOrginalName() != null) {
-                    existingFileTopic.setFileOrginalName(fileTopic.getFileOrginalName());
-                }
-                if (fileTopic.getFileNameUz() != null) {
-                    existingFileTopic.setFileNameUz(fileTopic.getFileNameUz());
-                }
-                if (fileTopic.getFileNameRu() != null) {
-                    existingFileTopic.setFileNameRu(fileTopic.getFileNameRu());
-                }
-                if (fileTopic.getFileNameKr() != null) {
-                    existingFileTopic.setFileNameKr(fileTopic.getFileNameKr());
-                }
-                if (fileTopic.getFileType() != null) {
-                    existingFileTopic.setFileType(fileTopic.getFileType());
-                }
-                if (fileTopic.getFileSize() != null) {
-                    existingFileTopic.setFileSize(fileTopic.getFileSize());
-                }
-                if (fileTopic.getFilePath() != null) {
-                    existingFileTopic.setFilePath(fileTopic.getFilePath());
-                }
+                fileTopicMapper.partialUpdate(existingFileTopic, fileTopicDTO);
 
                 return existingFileTopic;
             })
-            .map(fileTopicRepository::save);
+            .map(fileTopicRepository::save)
+            .map(fileTopicMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<FileTopic> findAll() {
+    public List<FileTopicDTO> findAll() {
         log.debug("Request to get all FileTopics");
-        return fileTopicRepository.findAll();
+        return fileTopicRepository.findAll().stream().map(fileTopicMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<FileTopic> findOne(Long id) {
+    public Optional<FileTopicDTO> findOne(Long id) {
         log.debug("Request to get FileTopic : {}", id);
-        return fileTopicRepository.findById(id);
+        return fileTopicRepository.findById(id).map(fileTopicMapper::toDto);
     }
 
     @Override

@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.FileTopic;
 import uz.tashkec.repository.FileTopicRepository;
 import uz.tashkec.service.FileTopicService;
+import uz.tashkec.service.dto.FileTopicDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class FileTopicResource {
     /**
      * {@code POST  /file-topics} : Create a new fileTopic.
      *
-     * @param fileTopic the fileTopic to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new fileTopic, or with status {@code 400 (Bad Request)} if the fileTopic has already an ID.
+     * @param fileTopicDTO the fileTopicDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new fileTopicDTO, or with status {@code 400 (Bad Request)} if the fileTopic has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/file-topics")
-    public ResponseEntity<FileTopic> createFileTopic(@RequestBody FileTopic fileTopic) throws URISyntaxException {
-        log.debug("REST request to save FileTopic : {}", fileTopic);
-        if (fileTopic.getId() != null) {
+    public ResponseEntity<FileTopicDTO> createFileTopic(@RequestBody FileTopicDTO fileTopicDTO) throws URISyntaxException {
+        log.debug("REST request to save FileTopic : {}", fileTopicDTO);
+        if (fileTopicDTO.getId() != null) {
             throw new BadRequestAlertException("A new fileTopic cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        FileTopic result = fileTopicService.save(fileTopic);
+        FileTopicDTO result = fileTopicService.save(fileTopicDTO);
         return ResponseEntity
             .created(new URI("/api/file-topics/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,23 +63,23 @@ public class FileTopicResource {
     /**
      * {@code PUT  /file-topics/:id} : Updates an existing fileTopic.
      *
-     * @param id the id of the fileTopic to save.
-     * @param fileTopic the fileTopic to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fileTopic,
-     * or with status {@code 400 (Bad Request)} if the fileTopic is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the fileTopic couldn't be updated.
+     * @param id the id of the fileTopicDTO to save.
+     * @param fileTopicDTO the fileTopicDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fileTopicDTO,
+     * or with status {@code 400 (Bad Request)} if the fileTopicDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the fileTopicDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/file-topics/{id}")
-    public ResponseEntity<FileTopic> updateFileTopic(
+    public ResponseEntity<FileTopicDTO> updateFileTopic(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody FileTopic fileTopic
+        @RequestBody FileTopicDTO fileTopicDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update FileTopic : {}, {}", id, fileTopic);
-        if (fileTopic.getId() == null) {
+        log.debug("REST request to update FileTopic : {}, {}", id, fileTopicDTO);
+        if (fileTopicDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, fileTopic.getId())) {
+        if (!Objects.equals(id, fileTopicDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -87,34 +87,34 @@ public class FileTopicResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        FileTopic result = fileTopicService.update(fileTopic);
+        FileTopicDTO result = fileTopicService.update(fileTopicDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fileTopic.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fileTopicDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /file-topics/:id} : Partial updates given fields of an existing fileTopic, field will ignore if it is null
      *
-     * @param id the id of the fileTopic to save.
-     * @param fileTopic the fileTopic to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fileTopic,
-     * or with status {@code 400 (Bad Request)} if the fileTopic is not valid,
-     * or with status {@code 404 (Not Found)} if the fileTopic is not found,
-     * or with status {@code 500 (Internal Server Error)} if the fileTopic couldn't be updated.
+     * @param id the id of the fileTopicDTO to save.
+     * @param fileTopicDTO the fileTopicDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fileTopicDTO,
+     * or with status {@code 400 (Bad Request)} if the fileTopicDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the fileTopicDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the fileTopicDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/file-topics/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<FileTopic> partialUpdateFileTopic(
+    public ResponseEntity<FileTopicDTO> partialUpdateFileTopic(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody FileTopic fileTopic
+        @RequestBody FileTopicDTO fileTopicDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update FileTopic partially : {}, {}", id, fileTopic);
-        if (fileTopic.getId() == null) {
+        log.debug("REST request to partial update FileTopic partially : {}, {}", id, fileTopicDTO);
+        if (fileTopicDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, fileTopic.getId())) {
+        if (!Objects.equals(id, fileTopicDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -122,11 +122,11 @@ public class FileTopicResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<FileTopic> result = fileTopicService.partialUpdate(fileTopic);
+        Optional<FileTopicDTO> result = fileTopicService.partialUpdate(fileTopicDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fileTopic.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fileTopicDTO.getId().toString())
         );
     }
 
@@ -136,7 +136,7 @@ public class FileTopicResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fileTopics in body.
      */
     @GetMapping("/file-topics")
-    public List<FileTopic> getAllFileTopics() {
+    public List<FileTopicDTO> getAllFileTopics() {
         log.debug("REST request to get all FileTopics");
         return fileTopicService.findAll();
     }
@@ -144,20 +144,20 @@ public class FileTopicResource {
     /**
      * {@code GET  /file-topics/:id} : get the "id" fileTopic.
      *
-     * @param id the id of the fileTopic to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the fileTopic, or with status {@code 404 (Not Found)}.
+     * @param id the id of the fileTopicDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the fileTopicDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/file-topics/{id}")
-    public ResponseEntity<FileTopic> getFileTopic(@PathVariable Long id) {
+    public ResponseEntity<FileTopicDTO> getFileTopic(@PathVariable Long id) {
         log.debug("REST request to get FileTopic : {}", id);
-        Optional<FileTopic> fileTopic = fileTopicService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(fileTopic);
+        Optional<FileTopicDTO> fileTopicDTO = fileTopicService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(fileTopicDTO);
     }
 
     /**
      * {@code DELETE  /file-topics/:id} : delete the "id" fileTopic.
      *
-     * @param id the id of the fileTopic to delete.
+     * @param id the id of the fileTopicDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/file-topics/{id}")

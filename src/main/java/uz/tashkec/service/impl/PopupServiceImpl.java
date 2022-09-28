@@ -1,7 +1,9 @@
 package uz.tashkec.service.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import uz.tashkec.domain.Popup;
 import uz.tashkec.repository.PopupRepository;
 import uz.tashkec.service.PopupService;
+import uz.tashkec.service.dto.PopupDTO;
+import uz.tashkec.service.mapper.PopupMapper;
 
 /**
  * Service Implementation for managing {@link Popup}.
@@ -21,56 +25,56 @@ public class PopupServiceImpl implements PopupService {
 
     private final PopupRepository popupRepository;
 
-    public PopupServiceImpl(PopupRepository popupRepository) {
+    private final PopupMapper popupMapper;
+
+    public PopupServiceImpl(PopupRepository popupRepository, PopupMapper popupMapper) {
         this.popupRepository = popupRepository;
+        this.popupMapper = popupMapper;
     }
 
     @Override
-    public Popup save(Popup popup) {
-        log.debug("Request to save Popup : {}", popup);
-        return popupRepository.save(popup);
+    public PopupDTO save(PopupDTO popupDTO) {
+        log.debug("Request to save Popup : {}", popupDTO);
+        Popup popup = popupMapper.toEntity(popupDTO);
+        popup = popupRepository.save(popup);
+        return popupMapper.toDto(popup);
     }
 
     @Override
-    public Popup update(Popup popup) {
-        log.debug("Request to update Popup : {}", popup);
-        return popupRepository.save(popup);
+    public PopupDTO update(PopupDTO popupDTO) {
+        log.debug("Request to update Popup : {}", popupDTO);
+        Popup popup = popupMapper.toEntity(popupDTO);
+        popup = popupRepository.save(popup);
+        return popupMapper.toDto(popup);
     }
 
     @Override
-    public Optional<Popup> partialUpdate(Popup popup) {
-        log.debug("Request to partially update Popup : {}", popup);
+    public Optional<PopupDTO> partialUpdate(PopupDTO popupDTO) {
+        log.debug("Request to partially update Popup : {}", popupDTO);
 
         return popupRepository
-            .findById(popup.getId())
+            .findById(popupDTO.getId())
             .map(existingPopup -> {
-                if (popup.getIsImage() != null) {
-                    existingPopup.setIsImage(popup.getIsImage());
-                }
-                if (popup.getVideoUrl() != null) {
-                    existingPopup.setVideoUrl(popup.getVideoUrl());
-                }
-                if (popup.getRedirectUrl() != null) {
-                    existingPopup.setRedirectUrl(popup.getRedirectUrl());
-                }
+                popupMapper.partialUpdate(existingPopup, popupDTO);
 
                 return existingPopup;
             })
-            .map(popupRepository::save);
+            .map(popupRepository::save)
+            .map(popupMapper::toDto);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Popup> findAll() {
+    public List<PopupDTO> findAll() {
         log.debug("Request to get all Popups");
-        return popupRepository.findAll();
+        return popupRepository.findAll().stream().map(popupMapper::toDto).collect(Collectors.toCollection(LinkedList::new));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Popup> findOne(Long id) {
+    public Optional<PopupDTO> findOne(Long id) {
         log.debug("Request to get Popup : {}", id);
-        return popupRepository.findById(id);
+        return popupRepository.findById(id).map(popupMapper::toDto);
     }
 
     @Override

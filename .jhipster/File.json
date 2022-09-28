@@ -1,7 +1,7 @@
 {
   "applications": "*",
   "changelogDate": "20220928111726",
-  "dto": "no",
+  "dto": "mapstruct",
   "embedded": false,
   "entityTableName": "file",
   "fields": [

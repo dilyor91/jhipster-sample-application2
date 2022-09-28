@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.File;
 import uz.tashkec.repository.FileRepository;
 import uz.tashkec.service.FileService;
+import uz.tashkec.service.dto.FileDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class FileResource {
     /**
      * {@code POST  /files} : Create a new file.
      *
-     * @param file the file to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new file, or with status {@code 400 (Bad Request)} if the file has already an ID.
+     * @param fileDTO the fileDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new fileDTO, or with status {@code 400 (Bad Request)} if the file has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/files")
-    public ResponseEntity<File> createFile(@RequestBody File file) throws URISyntaxException {
-        log.debug("REST request to save File : {}", file);
-        if (file.getId() != null) {
+    public ResponseEntity<FileDTO> createFile(@RequestBody FileDTO fileDTO) throws URISyntaxException {
+        log.debug("REST request to save File : {}", fileDTO);
+        if (fileDTO.getId() != null) {
             throw new BadRequestAlertException("A new file cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        File result = fileService.save(file);
+        FileDTO result = fileService.save(fileDTO);
         return ResponseEntity
             .created(new URI("/api/files/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,21 +63,21 @@ public class FileResource {
     /**
      * {@code PUT  /files/:id} : Updates an existing file.
      *
-     * @param id the id of the file to save.
-     * @param file the file to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated file,
-     * or with status {@code 400 (Bad Request)} if the file is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the file couldn't be updated.
+     * @param id the id of the fileDTO to save.
+     * @param fileDTO the fileDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fileDTO,
+     * or with status {@code 400 (Bad Request)} if the fileDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the fileDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/files/{id}")
-    public ResponseEntity<File> updateFile(@PathVariable(value = "id", required = false) final Long id, @RequestBody File file)
+    public ResponseEntity<FileDTO> updateFile(@PathVariable(value = "id", required = false) final Long id, @RequestBody FileDTO fileDTO)
         throws URISyntaxException {
-        log.debug("REST request to update File : {}, {}", id, file);
-        if (file.getId() == null) {
+        log.debug("REST request to update File : {}, {}", id, fileDTO);
+        if (fileDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, file.getId())) {
+        if (!Objects.equals(id, fileDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -85,32 +85,34 @@ public class FileResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        File result = fileService.update(file);
+        FileDTO result = fileService.update(fileDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, file.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fileDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /files/:id} : Partial updates given fields of an existing file, field will ignore if it is null
      *
-     * @param id the id of the file to save.
-     * @param file the file to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated file,
-     * or with status {@code 400 (Bad Request)} if the file is not valid,
-     * or with status {@code 404 (Not Found)} if the file is not found,
-     * or with status {@code 500 (Internal Server Error)} if the file couldn't be updated.
+     * @param id the id of the fileDTO to save.
+     * @param fileDTO the fileDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated fileDTO,
+     * or with status {@code 400 (Bad Request)} if the fileDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the fileDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the fileDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/files/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<File> partialUpdateFile(@PathVariable(value = "id", required = false) final Long id, @RequestBody File file)
-        throws URISyntaxException {
-        log.debug("REST request to partial update File partially : {}, {}", id, file);
-        if (file.getId() == null) {
+    public ResponseEntity<FileDTO> partialUpdateFile(
+        @PathVariable(value = "id", required = false) final Long id,
+        @RequestBody FileDTO fileDTO
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update File partially : {}, {}", id, fileDTO);
+        if (fileDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, file.getId())) {
+        if (!Objects.equals(id, fileDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -118,11 +120,11 @@ public class FileResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<File> result = fileService.partialUpdate(file);
+        Optional<FileDTO> result = fileService.partialUpdate(fileDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, file.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, fileDTO.getId().toString())
         );
     }
 
@@ -132,7 +134,7 @@ public class FileResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of files in body.
      */
     @GetMapping("/files")
-    public List<File> getAllFiles() {
+    public List<FileDTO> getAllFiles() {
         log.debug("REST request to get all Files");
         return fileService.findAll();
     }
@@ -140,20 +142,20 @@ public class FileResource {
     /**
      * {@code GET  /files/:id} : get the "id" file.
      *
-     * @param id the id of the file to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the file, or with status {@code 404 (Not Found)}.
+     * @param id the id of the fileDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the fileDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/files/{id}")
-    public ResponseEntity<File> getFile(@PathVariable Long id) {
+    public ResponseEntity<FileDTO> getFile(@PathVariable Long id) {
         log.debug("REST request to get File : {}", id);
-        Optional<File> file = fileService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(file);
+        Optional<FileDTO> fileDTO = fileService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(fileDTO);
     }
 
     /**
      * {@code DELETE  /files/:id} : delete the "id" file.
      *
-     * @param id the id of the file to delete.
+     * @param id the id of the fileDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/files/{id}")

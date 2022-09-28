@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Institution;
+import uz.tashkec.service.dto.InstitutionDTO;
 
 /**
- * Service Interface for managing {@link Institution}.
+ * Service Interface for managing {@link uz.tashkec.domain.Institution}.
  */
 public interface InstitutionService {
     /**
      * Save a institution.
      *
-     * @param institution the entity to save.
+     * @param institutionDTO the entity to save.
      * @return the persisted entity.
      */
-    Institution save(Institution institution);
+    InstitutionDTO save(InstitutionDTO institutionDTO);
 
     /**
      * Updates a institution.
      *
-     * @param institution the entity to update.
+     * @param institutionDTO the entity to update.
      * @return the persisted entity.
      */
-    Institution update(Institution institution);
+    InstitutionDTO update(InstitutionDTO institutionDTO);
 
     /**
      * Partially updates a institution.
      *
-     * @param institution the entity to update partially.
+     * @param institutionDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Institution> partialUpdate(Institution institution);
+    Optional<InstitutionDTO> partialUpdate(InstitutionDTO institutionDTO);
 
     /**
      * Get all the institutions.
      *
      * @return the list of entities.
      */
-    List<Institution> findAll();
+    List<InstitutionDTO> findAll();
 
     /**
      * Get the "id" institution.
@@ -45,7 +45,7 @@ public interface InstitutionService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Institution> findOne(Long id);
+    Optional<InstitutionDTO> findOne(Long id);
 
     /**
      * Delete the "id" institution.

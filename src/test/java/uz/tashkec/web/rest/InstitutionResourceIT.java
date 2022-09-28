@@ -21,6 +21,8 @@ import uz.tashkec.IntegrationTest;
 import uz.tashkec.domain.Institution;
 import uz.tashkec.domain.enumeration.InstitutType;
 import uz.tashkec.repository.InstitutionRepository;
+import uz.tashkec.service.dto.InstitutionDTO;
+import uz.tashkec.service.mapper.InstitutionMapper;
 
 /**
  * Integration tests for the {@link InstitutionResource} REST controller.
@@ -65,6 +67,9 @@ class InstitutionResourceIT {
 
     @Autowired
     private InstitutionRepository institutionRepository;
+
+    @Autowired
+    private InstitutionMapper institutionMapper;
 
     @Autowired
     private EntityManager em;
@@ -124,8 +129,11 @@ class InstitutionResourceIT {
     void createInstitution() throws Exception {
         int databaseSizeBeforeCreate = institutionRepository.findAll().size();
         // Create the Institution
+        InstitutionDTO institutionDTO = institutionMapper.toDto(institution);
         restInstitutionMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(institution)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(institutionDTO))
+            )
             .andExpect(status().isCreated());
 
         // Validate the Institution in the database
@@ -148,12 +156,15 @@ class InstitutionResourceIT {
     void createInstitutionWithExistingId() throws Exception {
         // Create the Institution with an existing ID
         institution.setId(1L);
+        InstitutionDTO institutionDTO = institutionMapper.toDto(institution);
 
         int databaseSizeBeforeCreate = institutionRepository.findAll().size();
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restInstitutionMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(institution)))
+            .perform(
+                post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(institutionDTO))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the Institution in the database
@@ -236,12 +247,13 @@ class InstitutionResourceIT {
             .contentKr(UPDATED_CONTENT_KR)
             .logoName(UPDATED_LOGO_NAME)
             .logoData(UPDATED_LOGO_DATA);
+        InstitutionDTO institutionDTO = institutionMapper.toDto(updatedInstitution);
 
         restInstitutionMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, updatedInstitution.getId())
+                put(ENTITY_API_URL_ID, institutionDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(updatedInstitution))
+                    .content(TestUtil.convertObjectToJsonBytes(institutionDTO))
             )
             .andExpect(status().isOk());
 
@@ -266,12 +278,15 @@ class InstitutionResourceIT {
         int databaseSizeBeforeUpdate = institutionRepository.findAll().size();
         institution.setId(count.incrementAndGet());
 
+        // Create the Institution
+        InstitutionDTO institutionDTO = institutionMapper.toDto(institution);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restInstitutionMockMvc
             .perform(
-                put(ENTITY_API_URL_ID, institution.getId())
+                put(ENTITY_API_URL_ID, institutionDTO.getId())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(institution))
+                    .content(TestUtil.convertObjectToJsonBytes(institutionDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -286,12 +301,15 @@ class InstitutionResourceIT {
         int databaseSizeBeforeUpdate = institutionRepository.findAll().size();
         institution.setId(count.incrementAndGet());
 
+        // Create the Institution
+        InstitutionDTO institutionDTO = institutionMapper.toDto(institution);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restInstitutionMockMvc
             .perform(
                 put(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(TestUtil.convertObjectToJsonBytes(institution))
+                    .content(TestUtil.convertObjectToJsonBytes(institutionDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -306,9 +324,12 @@ class InstitutionResourceIT {
         int databaseSizeBeforeUpdate = institutionRepository.findAll().size();
         institution.setId(count.incrementAndGet());
 
+        // Create the Institution
+        InstitutionDTO institutionDTO = institutionMapper.toDto(institution);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restInstitutionMockMvc
-            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(institution)))
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(institutionDTO)))
             .andExpect(status().isMethodNotAllowed());
 
         // Validate the Institution in the database
@@ -410,12 +431,15 @@ class InstitutionResourceIT {
         int databaseSizeBeforeUpdate = institutionRepository.findAll().size();
         institution.setId(count.incrementAndGet());
 
+        // Create the Institution
+        InstitutionDTO institutionDTO = institutionMapper.toDto(institution);
+
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restInstitutionMockMvc
             .perform(
-                patch(ENTITY_API_URL_ID, institution.getId())
+                patch(ENTITY_API_URL_ID, institutionDTO.getId())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(institution))
+                    .content(TestUtil.convertObjectToJsonBytes(institutionDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -430,12 +454,15 @@ class InstitutionResourceIT {
         int databaseSizeBeforeUpdate = institutionRepository.findAll().size();
         institution.setId(count.incrementAndGet());
 
+        // Create the Institution
+        InstitutionDTO institutionDTO = institutionMapper.toDto(institution);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restInstitutionMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, count.incrementAndGet())
                     .contentType("application/merge-patch+json")
-                    .content(TestUtil.convertObjectToJsonBytes(institution))
+                    .content(TestUtil.convertObjectToJsonBytes(institutionDTO))
             )
             .andExpect(status().isBadRequest());
 
@@ -450,10 +477,13 @@ class InstitutionResourceIT {
         int databaseSizeBeforeUpdate = institutionRepository.findAll().size();
         institution.setId(count.incrementAndGet());
 
+        // Create the Institution
+        InstitutionDTO institutionDTO = institutionMapper.toDto(institution);
+
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
         restInstitutionMockMvc
             .perform(
-                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(institution))
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(institutionDTO))
             )
             .andExpect(status().isMethodNotAllowed());
 

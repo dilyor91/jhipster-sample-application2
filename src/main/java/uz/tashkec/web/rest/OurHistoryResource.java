@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
-import uz.tashkec.domain.OurHistory;
 import uz.tashkec.repository.OurHistoryRepository;
 import uz.tashkec.service.OurHistoryService;
+import uz.tashkec.service.dto.OurHistoryDTO;
 import uz.tashkec.web.rest.errors.BadRequestAlertException;
 
 /**
@@ -43,17 +43,17 @@ public class OurHistoryResource {
     /**
      * {@code POST  /our-histories} : Create a new ourHistory.
      *
-     * @param ourHistory the ourHistory to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new ourHistory, or with status {@code 400 (Bad Request)} if the ourHistory has already an ID.
+     * @param ourHistoryDTO the ourHistoryDTO to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new ourHistoryDTO, or with status {@code 400 (Bad Request)} if the ourHistory has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/our-histories")
-    public ResponseEntity<OurHistory> createOurHistory(@RequestBody OurHistory ourHistory) throws URISyntaxException {
-        log.debug("REST request to save OurHistory : {}", ourHistory);
-        if (ourHistory.getId() != null) {
+    public ResponseEntity<OurHistoryDTO> createOurHistory(@RequestBody OurHistoryDTO ourHistoryDTO) throws URISyntaxException {
+        log.debug("REST request to save OurHistory : {}", ourHistoryDTO);
+        if (ourHistoryDTO.getId() != null) {
             throw new BadRequestAlertException("A new ourHistory cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        OurHistory result = ourHistoryService.save(ourHistory);
+        OurHistoryDTO result = ourHistoryService.save(ourHistoryDTO);
         return ResponseEntity
             .created(new URI("/api/our-histories/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -63,23 +63,23 @@ public class OurHistoryResource {
     /**
      * {@code PUT  /our-histories/:id} : Updates an existing ourHistory.
      *
-     * @param id the id of the ourHistory to save.
-     * @param ourHistory the ourHistory to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated ourHistory,
-     * or with status {@code 400 (Bad Request)} if the ourHistory is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the ourHistory couldn't be updated.
+     * @param id the id of the ourHistoryDTO to save.
+     * @param ourHistoryDTO the ourHistoryDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated ourHistoryDTO,
+     * or with status {@code 400 (Bad Request)} if the ourHistoryDTO is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the ourHistoryDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/our-histories/{id}")
-    public ResponseEntity<OurHistory> updateOurHistory(
+    public ResponseEntity<OurHistoryDTO> updateOurHistory(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody OurHistory ourHistory
+        @RequestBody OurHistoryDTO ourHistoryDTO
     ) throws URISyntaxException {
-        log.debug("REST request to update OurHistory : {}, {}", id, ourHistory);
-        if (ourHistory.getId() == null) {
+        log.debug("REST request to update OurHistory : {}, {}", id, ourHistoryDTO);
+        if (ourHistoryDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, ourHistory.getId())) {
+        if (!Objects.equals(id, ourHistoryDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -87,34 +87,34 @@ public class OurHistoryResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        OurHistory result = ourHistoryService.update(ourHistory);
+        OurHistoryDTO result = ourHistoryService.update(ourHistoryDTO);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, ourHistory.getId().toString()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, ourHistoryDTO.getId().toString()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /our-histories/:id} : Partial updates given fields of an existing ourHistory, field will ignore if it is null
      *
-     * @param id the id of the ourHistory to save.
-     * @param ourHistory the ourHistory to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated ourHistory,
-     * or with status {@code 400 (Bad Request)} if the ourHistory is not valid,
-     * or with status {@code 404 (Not Found)} if the ourHistory is not found,
-     * or with status {@code 500 (Internal Server Error)} if the ourHistory couldn't be updated.
+     * @param id the id of the ourHistoryDTO to save.
+     * @param ourHistoryDTO the ourHistoryDTO to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated ourHistoryDTO,
+     * or with status {@code 400 (Bad Request)} if the ourHistoryDTO is not valid,
+     * or with status {@code 404 (Not Found)} if the ourHistoryDTO is not found,
+     * or with status {@code 500 (Internal Server Error)} if the ourHistoryDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PatchMapping(value = "/our-histories/{id}", consumes = { "application/json", "application/merge-patch+json" })
-    public ResponseEntity<OurHistory> partialUpdateOurHistory(
+    public ResponseEntity<OurHistoryDTO> partialUpdateOurHistory(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody OurHistory ourHistory
+        @RequestBody OurHistoryDTO ourHistoryDTO
     ) throws URISyntaxException {
-        log.debug("REST request to partial update OurHistory partially : {}, {}", id, ourHistory);
-        if (ourHistory.getId() == null) {
+        log.debug("REST request to partial update OurHistory partially : {}, {}", id, ourHistoryDTO);
+        if (ourHistoryDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, ourHistory.getId())) {
+        if (!Objects.equals(id, ourHistoryDTO.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -122,11 +122,11 @@ public class OurHistoryResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        Optional<OurHistory> result = ourHistoryService.partialUpdate(ourHistory);
+        Optional<OurHistoryDTO> result = ourHistoryService.partialUpdate(ourHistoryDTO);
 
         return ResponseUtil.wrapOrNotFound(
             result,
-            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, ourHistory.getId().toString())
+            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, ourHistoryDTO.getId().toString())
         );
     }
 
@@ -136,7 +136,7 @@ public class OurHistoryResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of ourHistories in body.
      */
     @GetMapping("/our-histories")
-    public List<OurHistory> getAllOurHistories() {
+    public List<OurHistoryDTO> getAllOurHistories() {
         log.debug("REST request to get all OurHistories");
         return ourHistoryService.findAll();
     }
@@ -144,20 +144,20 @@ public class OurHistoryResource {
     /**
      * {@code GET  /our-histories/:id} : get the "id" ourHistory.
      *
-     * @param id the id of the ourHistory to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the ourHistory, or with status {@code 404 (Not Found)}.
+     * @param id the id of the ourHistoryDTO to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the ourHistoryDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/our-histories/{id}")
-    public ResponseEntity<OurHistory> getOurHistory(@PathVariable Long id) {
+    public ResponseEntity<OurHistoryDTO> getOurHistory(@PathVariable Long id) {
         log.debug("REST request to get OurHistory : {}", id);
-        Optional<OurHistory> ourHistory = ourHistoryService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(ourHistory);
+        Optional<OurHistoryDTO> ourHistoryDTO = ourHistoryService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(ourHistoryDTO);
     }
 
     /**
      * {@code DELETE  /our-histories/:id} : delete the "id" ourHistory.
      *
-     * @param id the id of the ourHistory to delete.
+     * @param id the id of the ourHistoryDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/our-histories/{id}")

@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.File;
+import uz.tashkec.service.dto.FileDTO;
 
 /**
- * Service Interface for managing {@link File}.
+ * Service Interface for managing {@link uz.tashkec.domain.File}.
  */
 public interface FileService {
     /**
      * Save a file.
      *
-     * @param file the entity to save.
+     * @param fileDTO the entity to save.
      * @return the persisted entity.
      */
-    File save(File file);
+    FileDTO save(FileDTO fileDTO);
 
     /**
      * Updates a file.
      *
-     * @param file the entity to update.
+     * @param fileDTO the entity to update.
      * @return the persisted entity.
      */
-    File update(File file);
+    FileDTO update(FileDTO fileDTO);
 
     /**
      * Partially updates a file.
      *
-     * @param file the entity to update partially.
+     * @param fileDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<File> partialUpdate(File file);
+    Optional<FileDTO> partialUpdate(FileDTO fileDTO);
 
     /**
      * Get all the files.
      *
      * @return the list of entities.
      */
-    List<File> findAll();
+    List<FileDTO> findAll();
 
     /**
      * Get the "id" file.
@@ -45,7 +45,7 @@ public interface FileService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<File> findOne(Long id);
+    Optional<FileDTO> findOne(Long id);
 
     /**
      * Delete the "id" file.

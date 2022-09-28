@@ -2,42 +2,42 @@ package uz.tashkec.service;
 
 import java.util.List;
 import java.util.Optional;
-import uz.tashkec.domain.Address;
+import uz.tashkec.service.dto.AddressDTO;
 
 /**
- * Service Interface for managing {@link Address}.
+ * Service Interface for managing {@link uz.tashkec.domain.Address}.
  */
 public interface AddressService {
     /**
      * Save a address.
      *
-     * @param address the entity to save.
+     * @param addressDTO the entity to save.
      * @return the persisted entity.
      */
-    Address save(Address address);
+    AddressDTO save(AddressDTO addressDTO);
 
     /**
      * Updates a address.
      *
-     * @param address the entity to update.
+     * @param addressDTO the entity to update.
      * @return the persisted entity.
      */
-    Address update(Address address);
+    AddressDTO update(AddressDTO addressDTO);
 
     /**
      * Partially updates a address.
      *
-     * @param address the entity to update partially.
+     * @param addressDTO the entity to update partially.
      * @return the persisted entity.
      */
-    Optional<Address> partialUpdate(Address address);
+    Optional<AddressDTO> partialUpdate(AddressDTO addressDTO);
 
     /**
      * Get all the addresses.
      *
      * @return the list of entities.
      */
-    List<Address> findAll();
+    List<AddressDTO> findAll();
 
     /**
      * Get the "id" address.
@@ -45,7 +45,7 @@ public interface AddressService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Address> findOne(Long id);
+    Optional<AddressDTO> findOne(Long id);
 
     /**
      * Delete the "id" address.
