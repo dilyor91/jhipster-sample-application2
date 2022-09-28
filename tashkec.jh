@@ -8,6 +8,10 @@ entity Popup {
   redirectUrl String
 }
 
+relationship OneToOne {
+    PopUp{attachment} to Attachment
+}
+
 /** Файлы. Логотипы также хранятся здесь с типом LOGO */
 entity Attachment {
 	fileNameUz String,
@@ -20,10 +24,6 @@ entity Attachment {
     suffix String maxlength(8),
     thumbnailFileName String,
     bucketName String
-}
-
-relationship OneToOne {
-    Popup{attachment} to Attachment
 }
 
 entity Banner {
@@ -317,7 +317,7 @@ paginate JobHistory, Employee with infinite-scroll
 paginate Job with pagination
 
 // Use Data Transfer Objects (DTO)
-// dto * with mapstruct
+dto * with mapstruct
 
 // Set service options to all except few
 service all with serviceImpl except Employee, Job
